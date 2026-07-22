@@ -11,20 +11,50 @@ config_version=5
 [application]
 
 config/name="Lanting Housekeeping"
+run/main_scene="res://scenes/opening/opening.tscn"
 config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
+
+[audio]
+
+buses/default_bus_layout="uid://cd33cdomlapjt"
+
+[autoload]
+
+AppConfig="*uid://cjke6crjg14a0"
+SceneLoader="*uid://cbwmrnp0af35y"
+ProjectMusicController="*uid://r5t485lr3p7t"
+ProjectUISoundController="*uid://cc37235kj4384"
 
 [display]
 
 window/size/viewport_width=720
 window/size/viewport_height=1600
-window/stretch/mode="viewport"
+window/size/window_width_override=451
+window/size/window_height_override=1003
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 window/stretch/scale_mode="integer"
 window/handheld/orientation=1
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/maaacks_game_template/plugin.cfg")
 
 [global_group]
 
 Base=""
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://addons/maaacks_game_template/base/translations/menus_translations.en.translation", "res://addons/maaacks_game_template/base/translations/menus_translations.fr.translation")
+
+[maaacks_game_template]
+
+disable_install_audio_busses=true
+disable_update_check=false
+disable_install_wizard=true
+copy_path="res://"
 
 [physics]
 
