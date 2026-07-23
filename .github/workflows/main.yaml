@@ -1,0 +1,25 @@
+name: Build tester
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: croconut/godot-multi-builder@v1
+      with:
+        names: "Linux/X11, HTML5, Android, WindowsDesktop, MacOSX"
+        path-to-game: "tester"
+        debug-mode: "true"
+    - run: |
+          unzip ./tester/builds/builds.zip
+          git config user.email github-actions@github.com
+          git config user.name github-actions
+          git add ./tester/builds/*
+          git reset -- ./tester/builds/builds.zip
+          git commit -m 'builds generated'
+          git push --force
