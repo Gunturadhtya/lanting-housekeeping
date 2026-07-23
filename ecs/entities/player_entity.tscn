@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dvjsli6hvr27"]
+
+[ext_resource type="Script" uid="uid://b0xvun72uco7c" path="res://ecs/entities/player_entity.gd" id="1_cnlyv"]
+
+[node name="PlayerEntity" type="Node2D" unique_id=1601606335]
+script = ExtResource("1_cnlyv")
+
+[node name="Visual" type="Polygon2D" parent="." unique_id=25033473]
+color = Color(0.24, 0.52, 0.92, 1)
+polygon = PackedVector2Array(-28, -28, 28, -28, 28, 28, -28, 28)
+
+[node name="Label" type="Label" parent="." unique_id=1808159895]
+offset_left = -40.0
+offset_top = -60.0
+offset_right = 40.0
+offset_bottom = -30.0
+text = "BASE"
+horizontal_alignment = 1
