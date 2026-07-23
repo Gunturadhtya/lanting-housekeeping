@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://m3mm7ngil71s"]
+
+[ext_resource type="Script" uid="uid://c0b4rt2ctwx6o" path="res://scenes/utilities/safe_area_margin_container.gd" id="1_bdyt8"]
+
+[node name="SafeAreaMarginContainer" type="Control" unique_id=1572284943]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bdyt8")
