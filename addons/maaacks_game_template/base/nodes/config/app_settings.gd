@@ -124,6 +124,7 @@ static func set_audio_from_config() -> void:
 # Video
 
 static func set_fullscreen_enabled(value : bool, window : Window) -> void:
+	if OS.has_feature("mobile"): return
 	window.mode = Window.MODE_EXCLUSIVE_FULLSCREEN if (value) else Window.MODE_WINDOWED
 
 static func set_resolution(value : Vector2i, window : Window, update_config : bool = true) -> void:
@@ -169,6 +170,8 @@ static func _set_v_sync_from_config(window: Window) -> DisplayServer.VSyncMode:
 	return vsync
 
 static func set_video_from_config(window : Window) -> void:
+	if OS.has_feature("mobile"): 
+		return
 	window.size_changed.connect(_on_window_size_changed.bind(window))
 	var fullscreen_enabled := _set_fullscreen_from_config(window)
 	if not (fullscreen_enabled or OS.has_feature("web")):
