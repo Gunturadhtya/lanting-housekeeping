@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://c6pb7uvdk0vnk"]
+
+[ext_resource type="Script" uid="uid://k4rpbo3g3kbb" path="res://ecs/entities/player_unit_entity.gd" id="1"]
+
+[node name="PlayerUnitEntity" type="Node2D" unique_id=1302521944]
+script = ExtResource("1")
+
+[node name="Visual" type="Polygon2D" parent="." unique_id=966079632]
+color = Color(0.24, 0.52, 0.92, 1)
+polygon = PackedVector2Array(-10, -10, 14, 0, -10, 10)
