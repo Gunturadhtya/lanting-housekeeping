@@ -7,6 +7,7 @@ signal level_changed(level_path : String)
 
 enum Phase { PREPARATION, COMBAT }
 
+@export var debug : bool
 @export_file("*.tscn") var next_level_path : String
 @export var enemy_scene : PackedScene
 @export var spawn_interval : float = 1.5
@@ -87,6 +88,8 @@ func _start_wave() -> void:
 ## Phases
 func _on_phase_button_pressed() -> void:
 	if phase == Phase.PREPARATION:
+		if !debug :
+			phase_button.visible = false
 		_set_phase(Phase.COMBAT)
 	else:
 		_set_phase(Phase.PREPARATION)
