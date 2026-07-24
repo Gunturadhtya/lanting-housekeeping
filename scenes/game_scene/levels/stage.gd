@@ -10,7 +10,8 @@ enum Phase { PREPARATION, COMBAT }
 @export_file("*.tscn") var next_level_path : String
 @export var enemy_scene : PackedScene
 @export var spawn_interval : float = 1.5
-@export var enemies_count : int = 5
+@export var enemies_per_wave : int = 5
+@export var total_waves : int = 3
 
 @export var starting_deck : Array[CardResource] = []
 @export var hand_size : int = 4
@@ -25,12 +26,14 @@ enum Phase { PREPARATION, COMBAT }
 @onready var phase_label : Label = %PhaseLabel
 @onready var deck_label : Label = %DeckLabel
 @onready var drag_layer : CanvasLayer = %DragLayer
+@onready var wave_label : Label = %WaveLabel
 
 var world := ECSWorld.new()
 var systems : Array[ECSSystem] = []
 var player_id : int = -1
 var scrap : int = 0
-var enemies_spawned : int = 0
+var current_wave : int = 0
+var enemies_spawned_this_wave : int = 0
 var enemies_alive : int = 0
 var game_over : bool = false
 
@@ -73,6 +76,13 @@ func _physics_process(delta : float) -> void:
 		for system in systems:
 			system.process(world, delta)
 	_update_health_bar()
+	
+
+func _start_wave() -> void:
+	current_wave += 1
+	enemies_spawned_this_wave = 0
+	wave_label.text = "Wave %d / %d" % [current_wave, total_waves]
+	spawn_timer.start(spawn_interval)
 
 ## Phases
 func _on_phase_button_pressed() -> void:
@@ -89,14 +99,13 @@ func _set_phase(new_phase : int) -> void:
 		phase_button.text = "Start Combat"
 		hand_ui.set_playable_type(CardResource.CardType.UNIT)
 		deck.set_active_type(CardResource.CardType.UNIT)
-		spawn_timer.stop()
 	else:
 		phase_label.text = "Combat Phase"
 		phase_button.text = "Back to Prep"
 		hand_ui.set_playable_type(CardResource.CardType.ITEM)
 		deck.set_active_type(CardResource.CardType.ITEM)
-		enemies_spawned = 0
-		spawn_timer.start(spawn_interval)
+		enemies_spawned_this_wave = 0
+		_start_wave()
 	hand_ui.refill_hand()
 
 ## Card plays
@@ -156,8 +165,8 @@ func _use_item_card(card : CardResource, target_position : Vector2) -> void:
 ## Enemies
 func _on_spawn_timer_timeout() -> void:
 	_spawn_enemy()
-	enemies_spawned += 1
-	if enemies_spawned >= enemies_count:
+	enemies_spawned_this_wave += 1
+	if enemies_spawned_this_wave >= enemies_per_wave:
 		spawn_timer.stop()
 
 func _spawn_enemy() -> void:
@@ -170,6 +179,17 @@ func _spawn_enemy() -> void:
 	enemy.position = spawn_point.position
 	enemy.setup(world, player.position)
 	enemies_alive += 1
+	enemy.tree_exited.connect(_on_enemy_node_freed, CONNECT_ONE_SHOT)
+
+func _on_enemy_node_freed() -> void:
+	enemies_alive -= 1
+	if game_over:
+		return
+	if enemies_alive <= 0 and enemies_spawned_this_wave >= enemies_per_wave:
+		if current_wave >= total_waves:
+			level_won.emit(next_level_path)
+		else:
+			_start_wave()
 
 func _on_entity_died(entity_id : int) -> void:
 	if entity_id == player_id:

@@ -82,6 +82,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "HP"
 
+[node name="WaveLabel" type="Label" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=1148670224]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Wave 0/0"
+
 [node name="DeckLabel" type="Label" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=1847131793]
 unique_name_in_owner = true
 layout_mode = 2
