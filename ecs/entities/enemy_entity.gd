@@ -14,7 +14,7 @@ extends ECSEntity
 func setup(ecs_world : ECSWorld, destination : Vector2) -> void:
 	_register(ecs_world)
 	world.add_component(entity_id, HealthComponent.new(max_health, max_health))
-	world.add_component(entity_id, FactionComponent.new(FactionComponent.Type.ENEMY))
+	world.add_component(entity_id, FactionComponent.new(FactionComponent.FactionType.ENEMY))
 	world.add_component(entity_id, MotionComponent.new(move_speed, Vector2.ZERO, destination))
 	world.add_component(entity_id, ConeSensorComponent.new(sensor_radius, sensor_fov_degrees))
 	world.add_component(entity_id, CombatComponent.new(attack_damage, attack_range, attack_cooldown))

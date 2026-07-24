@@ -6,7 +6,7 @@ extends ECSEntity
 func setup(ecs_world : ECSWorld) -> void:
 	_register(ecs_world)
 	world.add_component(entity_id, HealthComponent.new(max_health, max_health))
-	world.add_component(entity_id, FactionComponent.new(FactionComponent.Type.PLAYER))
+	world.add_component(entity_id, FactionComponent.new(FactionComponent.FactionType.PLAYER))
 
 func get_health() -> HealthComponent:
 	if entity_id == -1:
