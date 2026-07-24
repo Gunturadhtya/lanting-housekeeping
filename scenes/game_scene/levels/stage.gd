@@ -224,8 +224,6 @@ func _update_deck_label() -> void:
 
 ## Point-and-click
 func _unhandled_input(event : InputEvent) -> void:
-	if phase != Phase.COMBAT:
-		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_handle_battlefield_click(event.global_position)
 
@@ -235,14 +233,20 @@ func _handle_battlefield_click(click_position : Vector2) -> void:
 	var clicked_unit_id := _find_unit_at(click_position)
 	if clicked_unit_id != -1:
 		selected_unit_id = clicked_unit_id
+		print("Selected unit: ", selected_unit_id)
+		_update_selection_indicator()
 		return
 	if selected_unit_id != -1:
 		var node := world.get_node(selected_unit_id)
 		if node and node.has_method("move_to"):
+			print("Moving unit ", selected_unit_id, " to ", click_position)
 			node.move_to(click_position)
+		else:
+			print("Move failed - node missing or no move_to method: ", node)
 		selected_unit_id = -1
+		_update_selection_indicator()
 
-func _find_unit_at(click_position : Vector2, max_distance : float = 32.0) -> int:
+func _find_unit_at(click_position : Vector2, max_distance : float = 48.0) -> int:
 	var closest_id := -1
 	var closest_distance := max_distance
 	for id in placed_unit_ids:
@@ -254,3 +258,9 @@ func _find_unit_at(click_position : Vector2, max_distance : float = 32.0) -> int
 			closest_distance = distance
 			closest_id = id
 	return closest_id
+
+func _update_selection_indicator() -> void:
+	for id in placed_unit_ids:
+		var node := world.get_node(id)
+		if node and node.has_method("set_selected"):
+			node.set_selected(id == selected_unit_id)

@@ -10,6 +10,8 @@ extends ECSEntity
 @export var attack_cooldown : float = 1.0
 @export var show_debug_cone : bool = true
 
+var _selected : bool = false
+
 const HEALTH_BAR_WIDTH := 40.0
 const HEALTH_BAR_HEIGHT := 6.0
 const HEALTH_BAR_Y_OFFSET := -34.0
@@ -30,12 +32,19 @@ func move_to(target_position : Vector2) -> void:
 	if motion:
 		motion.destination = target_position
 
+func set_selected(value : bool) -> void:
+	_selected = value
+	queue_redraw()
+
 func _process(_delta : float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
 	if entity_id == -1 or world == null:
 		return
+	
+	if _selected:
+		draw_circle(Vector2.ZERO, 20.0, Color(1, 1, 0, 0.35))
 
 	if show_debug_cone:
 		var sensor : ConeSensorComponent = world.get_component(entity_id, ConeSensorComponent)
