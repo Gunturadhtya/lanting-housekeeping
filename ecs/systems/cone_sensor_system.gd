@@ -36,3 +36,9 @@ func process(world : ECSWorld, _delta : float) -> void:
 			sensor_xform.rotation = (target_xform.position - sensor_xform.position).angle()
 		if combat:
 			combat.target_id = best_id
+		if motion and sensor_faction.type == FactionComponent.FactionType.ENEMY:
+			if best_id != -1:
+				var target_xform : TransformComponent = world.get_component(best_id, TransformComponent)
+				motion.destination = target_xform.position
+			else:
+				motion.destination = motion.home_destination
