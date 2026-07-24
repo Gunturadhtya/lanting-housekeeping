@@ -11,6 +11,7 @@
 [ext_resource type="Resource" uid="uid://crggj1qjvbr52" path="res://resources/card/melee_unit.tres" id="7_warrior"]
 [ext_resource type="Resource" uid="uid://tau0tox305a7" path="res://resources/card/ranged_unit.tres" id="8_archer"]
 [ext_resource type="Resource" uid="uid://srynk7uuyv22" path="res://resources/card/aoe_damage_item.tres" id="9_fireball"]
+[ext_resource type="PackedScene" uid="uid://c8deckviewui1" path="res://scenes/game_scene/card/deck_view_ui.tscn" id="10_deckview"]
 
 [node name="Level1" type="Control" unique_id=235822082]
 layout_mode = 3
@@ -87,10 +88,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Wave 0/0"
 
-[node name="DeckLabel" type="Label" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=1847131793]
+[node name="DeckLabel" type="Button" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=1847131793]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Deck: 0  Discard: 0"
+flat = true
 
 [node name="PhaseRow" type="HBoxContainer" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=1847131794]
 layout_mode = 2
@@ -129,3 +131,11 @@ layout_mode = 2
 [node name="DragLayer" type="CanvasLayer" parent="." unique_id=1847131799]
 unique_name_in_owner = true
 layer = 10
+
+[node name="OverlayLayer" type="CanvasLayer" parent="." unique_id=603945408]
+layer = 20
+
+[node name="DeckViewUI" parent="OverlayLayer" unique_id=912361293 instance=ExtResource("10_deckview")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3

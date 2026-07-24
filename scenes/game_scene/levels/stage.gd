@@ -25,9 +25,10 @@ enum Phase { PREPARATION, COMBAT }
 @onready var hand_ui : HandUI = %HandUI
 @onready var phase_button : Button = %PhaseButton
 @onready var phase_label : Label = %PhaseLabel
-@onready var deck_label : Label = %DeckLabel
+@onready var deck_label : Button = %DeckLabel
 @onready var drag_layer : CanvasLayer = %DragLayer
 @onready var wave_label : Label = %WaveLabel
+@onready var deck_view_ui : DeckViewUI = %DeckViewUI
 
 var world := ECSWorld.new()
 var systems : Array[ECSSystem] = []
@@ -63,6 +64,7 @@ func _ready() -> void:
 	hand_ui.hand_size = hand_size
 	hand_ui.setup(deck, drag_layer)
 	hand_ui.card_play_requested.connect(_on_card_play_requested)
+	deck_label.pressed.connect(_on_deck_label_pressed)
 
 	phase_button.pressed.connect(_on_phase_button_pressed)
 	_set_phase(Phase.PREPARATION)
@@ -264,3 +266,8 @@ func _update_selection_indicator() -> void:
 		var node := world.get_node(id)
 		if node and node.has_method("set_selected"):
 			node.set_selected(id == selected_unit_id)
+
+func _on_deck_label_pressed() -> void:
+	var cards := deck.get_all_cards()
+	cards.append_array(hand_ui.get_cards_in_hand())
+	deck_view_ui.show_cards(cards)

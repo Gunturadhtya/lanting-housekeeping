@@ -5,6 +5,7 @@ signal drag_ended(card_ui : CardUI, drop_global_position : Vector2)
 
 @export var card : CardResource
 @export var stuck_drag_timeout : float = 4.0
+@export var preview_mode : bool = false
 
 var drag_layer : Node = null
 
@@ -27,6 +28,8 @@ func _ready() -> void:
 	_stuck_timer.timeout.connect(_on_stuck_timeout)
 	add_child(_stuck_timer)
 	set_process_input(false)
+	if preview_mode:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func setup(new_card : CardResource) -> void:
 	card = new_card
@@ -50,6 +53,8 @@ func set_playable(playable : bool) -> void:
 		_finish_drag(global_position + _drag_offset)
 
 func _gui_input(event : InputEvent) -> void:
+	if preview_mode:
+		return
 	if not _playable or _dragging:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:

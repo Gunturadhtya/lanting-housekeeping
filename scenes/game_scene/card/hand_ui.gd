@@ -47,3 +47,9 @@ func cancel_play(card_ui : CardUI) -> void:
 func set_playable_type(type : int) -> void:
 	for ui in _card_uis:
 		ui.set_playable(ui.card.type == type)
+
+func get_cards_in_hand() -> Array[CardResource]:
+	var result : Array[CardResource] = []
+	for ui in _card_uis:
+		result.append(ui.card)
+	return result

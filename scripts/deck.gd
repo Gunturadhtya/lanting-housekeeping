@@ -65,6 +65,14 @@ func _reshuffle_discard_into_draw(type : int) -> void:
 	_draw_piles[type].shuffle()
 	deck_changed.emit()
 
+func get_all_cards() -> Array[CardResource]:
+	var result : Array[CardResource] = []
+	for type in _draw_piles.keys():
+		result.append_array(_draw_piles[type])
+	for type in _discard_piles.keys():
+		result.append_array(_discard_piles[type])
+	return result
+
 func draw_count() -> int:
 	return _draw_piles[_active_type].size()
 
