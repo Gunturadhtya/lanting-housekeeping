@@ -38,6 +38,7 @@ var deck : Deck
 var phase : int = Phase.PREPARATION
 var selected_unit_id : int = -1
 var placed_unit_ids : Array[int] = []
+var placed_unit_cards : Dictionary = {} 
 
 func _ready() -> void:
 	systems = [
@@ -140,6 +141,7 @@ func _spawn_player_unit(card : CardResource, drop_position : Vector2) -> void:
 	unit.position = drop_position
 	unit.setup(world)
 	placed_unit_ids.append(unit.entity_id)
+	placed_unit_cards[unit.entity_id] = card
 
 func _use_item_card(card : CardResource, target_position : Vector2) -> void:
 	for id in world.query([TransformComponent, FactionComponent, HealthComponent]):
@@ -175,7 +177,12 @@ func _on_entity_died(entity_id : int) -> void:
 			game_over = true
 			level_lost.emit()
 		return
-	placed_unit_ids.erase(entity_id)
+	if entity_id in placed_unit_ids:
+		placed_unit_ids.erase(entity_id)
+		var card : CardResource = placed_unit_cards.get(entity_id)
+		if card:
+			deck.return_card_to_draw(card)
+			placed_unit_cards.erase(entity_id)
 	if selected_unit_id == entity_id:
 		selected_unit_id = -1
 	var node := world.get_node(entity_id)

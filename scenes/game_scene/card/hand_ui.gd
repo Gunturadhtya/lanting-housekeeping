@@ -17,6 +17,8 @@ func setup(new_deck : Deck, new_drag_layer : Node = null) -> void:
 
 func refill_hand() -> void:
 	while _card_uis.size() < hand_size:
+		if deck.draw_count() == 0 and _card_uis.is_empty() and deck.active_type() == CardResource.CardType.ITEM:
+			deck.reshuffle_if_hand_empty(deck.active_type())
 		var card : CardResource = deck.draw_card()
 		if card == null:
 			break

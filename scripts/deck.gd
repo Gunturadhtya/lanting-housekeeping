@@ -30,15 +30,30 @@ func draw_card() -> CardResource:
 	var pile : Array = _draw_piles[_active_type]
 	if pile.is_empty():
 		return null
-		#_reshuffle_discard_into_draw(_active_type)
 	var card : CardResource = pile.pop_back()
 	deck_changed.emit()
 	return card
+
+func reshuffle_if_hand_empty(type : int) -> void:
+	if _draw_piles[type].is_empty():
+		_reshuffle_discard_into_draw(type)
 
 func discard(card : CardResource) -> void:
 	if card == null:
 		return
 	_discard_piles[card.type].append(card)
+	deck_changed.emit()
+
+func return_card_to_draw(card : CardResource) -> void:
+	if card == null:
+		return
+	var discard : Array = _discard_piles[card.type]
+	var idx := discard.find(card)
+	if idx == -1:
+		return
+	discard.remove_at(idx)
+	var pile : Array = _draw_piles[card.type]
+	pile.insert(randi_range(0, pile.size()), card)
 	deck_changed.emit()
 
 func _reshuffle_discard_into_draw(type : int) -> void:
@@ -55,3 +70,6 @@ func draw_count() -> int:
 
 func discard_count() -> int:
 	return _discard_piles[_active_type].size()
+
+func active_type() -> int:
+	return _active_type
