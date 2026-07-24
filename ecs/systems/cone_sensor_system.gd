@@ -26,7 +26,7 @@ func process(world : ECSWorld, _delta : float) -> void:
 			var distance := offset.length()
 			if distance > sensor.radius:
 				continue
-			if distance > 0.0 and rad_to_deg(absf(forward.angle_to(offset))) > half_fov:
+			if not is_stationary and distance > 0.0 and rad_to_deg(absf(forward.angle_to(offset))) > half_fov:
 				continue
 			if distance < best_distance:
 				best_distance = distance
