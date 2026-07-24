@@ -68,12 +68,12 @@ func _ready() -> void:
 func _physics_process(delta : float) -> void:
 	if game_over:
 		return
-	for system in systems:
-		system.process(world, delta)
+	if phase == Phase.COMBAT:
+		for system in systems:
+			system.process(world, delta)
 	_update_health_bar()
 
 ## Phases
-
 func _on_phase_button_pressed() -> void:
 	if phase == Phase.PREPARATION:
 		_set_phase(Phase.COMBAT)
@@ -87,13 +87,16 @@ func _set_phase(new_phase : int) -> void:
 		phase_label.text = "Preparation Phase"
 		phase_button.text = "Start Combat"
 		hand_ui.set_playable_type(CardResource.CardType.UNIT)
+		deck.set_active_type(CardResource.CardType.UNIT)
 		spawn_timer.stop()
 	else:
 		phase_label.text = "Combat Phase"
 		phase_button.text = "Back to Prep"
 		hand_ui.set_playable_type(CardResource.CardType.ITEM)
+		deck.set_active_type(CardResource.CardType.ITEM)
 		enemies_spawned = 0
 		spawn_timer.start(spawn_interval)
+	hand_ui.refill_hand()
 
 ## Card plays
 func _on_card_play_requested(card : CardResource, drop_global_position : Vector2, card_ui : CardUI) -> void:
