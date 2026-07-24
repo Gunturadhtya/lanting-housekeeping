@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://xbm1xxnioo0u"]
+
+[ext_resource type="Script" uid="uid://bd7py3qqutol1" path="res://scenes/game_scene/card/hand_ui.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/game_scene/card/card_ui.tscn" id="2"]
+
+[node name="HandUI" type="HBoxContainer" unique_id=391194816]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+alignment = 1
+script = ExtResource("1")
+card_ui_scene = ExtResource("2")
