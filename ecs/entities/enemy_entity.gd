@@ -11,6 +11,10 @@ extends ECSEntity
 @export var scrap_reward : int = 10
 @export var show_debug_cone : bool = true
 
+const HEALTH_BAR_WIDTH := 32.0
+const HEALTH_BAR_HEIGHT := 5.0
+const HEALTH_BAR_Y_OFFSET := -26.0
+
 func setup(ecs_world : ECSWorld, destination : Vector2) -> void:
 	_register(ecs_world)
 	world.add_component(entity_id, HealthComponent.new(max_health, max_health))
@@ -26,15 +30,26 @@ func _process(_delta : float) -> void:
 		queue_redraw()
 
 func _draw() -> void:
-	if not show_debug_cone or entity_id == -1:
+	if entity_id == -1 or world == null:
 		return
-	var sensor : ConeSensorComponent = world.get_component(entity_id, ConeSensorComponent)
-	if sensor == null:
+	if show_debug_cone:
+		var sensor : ConeSensorComponent = world.get_component(entity_id, ConeSensorComponent)
+		if sensor:
+			var steps := 12
+			var half_fov := deg_to_rad(sensor.fov_degrees * 0.5)
+			var points := PackedVector2Array([Vector2.ZERO])
+			for i in range(steps + 1):
+				var angle := -half_fov + (2.0 * half_fov) * (float(i) / steps)
+				points.append(Vector2.RIGHT.rotated(angle) * sensor.radius)
+			draw_colored_polygon(points, Color(1.0, 0.2, 0.2, 0.15))
+
+	var health : HealthComponent = world.get_component(entity_id, HealthComponent)
+	if health == null:
 		return
-	var steps := 12
-	var half_fov := deg_to_rad(sensor.fov_degrees * 0.5)
-	var points := PackedVector2Array([Vector2.ZERO])
-	for i in range(steps + 1):
-		var angle := -half_fov + (2.0 * half_fov) * (float(i) / steps)
-		points.append(Vector2.RIGHT.rotated(angle) * sensor.radius)
-	draw_colored_polygon(points, Color(1.0, 0.2, 0.2, 0.15))
+	draw_set_transform(Vector2.ZERO, -rotation, Vector2.ONE)
+	var top_left := Vector2(-HEALTH_BAR_WIDTH * 0.5, HEALTH_BAR_Y_OFFSET)
+	var ratio : float = clampf(float(health.current) / float(maxi(health.max, 1)), 0.0, 1.0)
+	draw_rect(Rect2(top_left, Vector2(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT)), Color(0, 0, 0, 0.6))
+	draw_rect(Rect2(top_left, Vector2(HEALTH_BAR_WIDTH * ratio, HEALTH_BAR_HEIGHT)), Color(0.9, 0.25, 0.25, 1.0))
+	draw_rect(Rect2(top_left, Vector2(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT)), Color(0, 0, 0, 1.0), false, 1.0)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)

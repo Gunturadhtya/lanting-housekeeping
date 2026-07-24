@@ -47,3 +47,14 @@ func _draw() -> void:
 				var angle := -half_fov + (2.0 * half_fov) * (float(i) / steps)
 				points.append(Vector2.RIGHT.rotated(angle) * sensor.radius)
 			draw_colored_polygon(points, Color(0.25, 0.65, 1.0, 0.12))
+	
+	var health : HealthComponent = world.get_component(entity_id, HealthComponent)
+	if health == null:
+		return
+	draw_set_transform(Vector2.ZERO, -rotation, Vector2.ONE)
+	var top_left := Vector2(-HEALTH_BAR_WIDTH * 0.5, HEALTH_BAR_Y_OFFSET)
+	var ratio : float = clampf(float(health.current) / float(maxi(health.max, 1)), 0.0, 1.0)
+	draw_rect(Rect2(top_left, Vector2(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT)), Color(0, 0, 0, 0.6))
+	draw_rect(Rect2(top_left, Vector2(HEALTH_BAR_WIDTH * ratio, HEALTH_BAR_HEIGHT)), Color(0.25, 0.9, 0.35, 1.0))
+	draw_rect(Rect2(top_left, Vector2(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT)), Color(0, 0, 0, 1.0), false, 1.0)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
