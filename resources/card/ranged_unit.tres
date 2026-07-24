@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://tau0tox305a7"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_84fag"]
+[ext_resource type="PackedScene" uid="uid://c6pb7uvdk0vnk" path="res://ecs/entities/player_unit_entity.tscn" id="2_3pvtj"]
+
+[resource]
+script = ExtResource("1_84fag")
+card_name = "Ranged"
+unit_scene = ExtResource("2_3pvtj")
+unit_max_health = 25
+unit_move_speed = 100.0
+unit_sensor_radius = 300.0
+unit_sensor_fov_degrees = 70.0
+unit_attack_damage = 6
+unit_attack_range = 280.0
+unit_attack_cooldown = 0.6

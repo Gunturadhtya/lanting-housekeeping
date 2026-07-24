@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://crggj1qjvbr52"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_bxpns"]
+[ext_resource type="PackedScene" uid="uid://c6pb7uvdk0vnk" path="res://ecs/entities/player_unit_entity.tscn" id="2_2muc7"]
+
+[resource]
+script = ExtResource("1_bxpns")
+card_name = "Melee"
+unit_scene = ExtResource("2_2muc7")
+unit_max_health = 45
+unit_sensor_radius = 200.0
+unit_attack_damage = 8
+unit_attack_range = 180.0
+unit_attack_cooldown = 0.9

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://srynk7uuyv22"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_5cnht"]
+
+[resource]
+script = ExtResource("1_5cnht")
+card_name = "AoE Damage"
+type = 0
+item_damage = 25
+item_radius = 130.0
