@@ -2,7 +2,7 @@
 
 By **WG OKE**
 
-GDD: [/docs/lanting-housekeeping.md](lanting-housekeeping.md)
+GDD: [/docs/lanting-housekeeping.md](/docs/lanting-housekeeping.md)
 
 ## Basic Information
 
