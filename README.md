@@ -2,6 +2,8 @@
 
 By **WG OKE**
 
+GDD: [/docs/lanting-housekeeping.md](lanting-housekeeping.md)
+
 ## Basic Information
 
 - Engine: Godot
