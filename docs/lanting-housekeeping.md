@@ -87,7 +87,9 @@ Map Navigation ─> Combat Phase ─> Collect Scraps & Card Rewards ─> Deck Bu
 
 ---
 
-## 5. Technology Stack & Development Resources
+## 5. Technical Specs
+
+### Tools
 
 | Category | Tool / Resource | Purpose |
 | --- | --- | --- |
@@ -96,5 +98,9 @@ Map Navigation ─> Combat Phase ─> Collect Scraps & Card Rewards ─> Deck Bu
 | **Visual Art** | Aseprite | Pixel art assets, animations, and UI elements |
 | **Audio Tools** | Audacity & BandLab | Sound effect editing, composition, and audio mixing |
 | **Hardware** | PC & Android Devices | PC for primary development; Android devices for mobile testing |
+
+### Technical Details
+
+* **Game Resolution:** 90x200 pixels, upscaled to the player's screen resolution.
 
 ---
