@@ -22,6 +22,14 @@ signal game_exited
 @export var signal_game_exit : bool = false
 
 var sub_menu : Control
+var base_starting_deck : Array[CardResource] = [
+	preload("res://resources/card/melee_unit.tres"),
+	preload("res://resources/card/melee_unit.tres"),
+	preload("res://resources/card/ranged_unit.tres"),
+	preload("res://resources/card/ranged_unit.tres"),
+	preload("res://resources/card/aoe_damage_item.tres"),
+	preload("res://resources/card/aoe_damage_item.tres"),
+]
 
 @onready var menu_container = %MenuContainer
 @onready var menu_buttons_box_container = %MenuButtonsBoxContainer
@@ -106,6 +114,10 @@ func _hide_credits_if_unset() -> void:
 		credits_button.hide()
 
 func _ready() -> void:
+	var seed_value := randi()
+	RunManager.start_new_run(base_starting_deck, 100, seed_value)
+	var map_data := MapGenerator.generate(seed_value)
+	RunManager.set_map_data(map_data)
 	_hide_exit_for_web()
 	_hide_options_if_unset()
 	_hide_credits_if_unset()

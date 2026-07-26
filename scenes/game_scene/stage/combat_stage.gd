@@ -17,7 +17,9 @@ enum Phase { PREPARATION, COMBAT }
 @export var starting_deck : Array[CardResource] = []
 @export var hand_size : int = 4
 @export var hand_area_height : float = 190.0
+@export var reward_card_pool : Array[CardResource] = []  
 
+@onready var reward_phase : RewardPhase = %RewardPhase
 @onready var player : PlayerEntity = %Player
 @onready var spawn_points : Node2D = %SpawnPoints
 @onready var health_label : Label = %HealthLabel
@@ -29,6 +31,7 @@ enum Phase { PREPARATION, COMBAT }
 @onready var drag_layer : CanvasLayer = %DragLayer
 @onready var wave_label : Label = %WaveLabel
 @onready var deck_view_ui : DeckViewUI = %DeckViewUI
+@onready var scrap_label : Label = %ScrapLabel
 
 var world := ECSWorld.new()
 var systems : Array[ECSSystem] = []
@@ -59,18 +62,30 @@ func _ready() -> void:
 	player.setup(world)
 	player_id = player.entity_id
 
-	deck = Deck.new(starting_deck)
+	deck = Deck.new(_get_starting_deck())
 	deck.deck_changed.connect(_update_deck_label)
 	hand_ui.hand_size = hand_size
 	hand_ui.setup(deck, drag_layer)
 	hand_ui.card_play_requested.connect(_on_card_play_requested)
 	deck_label.pressed.connect(_on_deck_label_pressed)
+	
+	level_won.connect(_on_combat_won)
+	level_lost.connect(_on_combat_lost)
 
 	phase_button.pressed.connect(_on_phase_button_pressed)
 	_set_phase(Phase.PREPARATION)
 
+	scrap = RunManager.get_scrap() if RunManager.has_active_run() else 0
 	_update_health_bar()
 	_update_deck_label()
+	_update_scrap_label()
+
+func _get_starting_deck() -> Array[CardResource]:
+	if RunManager.has_active_run():
+		var run_deck := RunManager.get_deck()
+		if not run_deck.is_empty():
+			return run_deck
+	return starting_deck
 
 func _physics_process(delta : float) -> void:
 	if game_over:
@@ -79,6 +94,7 @@ func _physics_process(delta : float) -> void:
 		for system in systems:
 			system.process(world, delta)
 	_update_health_bar()
+	_update_scrap_label()
 	
 
 func _start_wave() -> void:
@@ -192,16 +208,20 @@ func _on_enemy_node_freed() -> void:
 		return
 	if enemies_alive <= 0 and enemies_spawned_this_wave >= enemies_per_wave:
 		if current_wave >= total_waves:
-			level_won.emit(next_level_path)
+			_show_victory_reward()
 		else:
 			_start_wave()
+
 
 func _on_entity_died(entity_id : int) -> void:
 	if entity_id == player_id:
 		if not game_over:
 			game_over = true
-			level_lost.emit()
+			call_deferred("emit_signal", "level_lost")
 		return
+	if world.has_component(entity_id, ScrapRewardComponent):
+		var reward : ScrapRewardComponent = world.get_component(entity_id, ScrapRewardComponent)
+		_collect_scrap(reward.amount)
 	if entity_id in placed_unit_ids:
 		placed_unit_ids.erase(entity_id)
 		var card : CardResource = placed_unit_cards.get(entity_id)
@@ -215,10 +235,16 @@ func _on_entity_died(entity_id : int) -> void:
 	if node and is_instance_valid(node):
 		node.queue_free()
 
+func _collect_scrap(amount : int) -> void:
+	scrap += amount
+	RunManager.add_scrap(amount)
+
 func _update_health_bar() -> void:
 	var health := player.get_health()
 	if health:
 		health_label.text = "HP: %d/%d" % [health.current, health.max]
+		if RunManager.has_active_run():
+			RunManager.sync_hp(health.current, health.max)
 
 func _update_deck_label() -> void:
 	if deck_label:
@@ -271,3 +297,36 @@ func _on_deck_label_pressed() -> void:
 	var cards := deck.get_all_cards()
 	cards.append_array(hand_ui.get_cards_in_hand())
 	deck_view_ui.show_cards(cards)
+	
+func _update_scrap_label() -> void:
+	scrap_label.text = "Scrap: %d" % scrap
+	
+
+## Reward
+func _show_victory_reward() -> void:
+	game_over = true
+	if not reward_phase.card_chosen.is_connected(_on_reward_card_chosen):
+		reward_phase.card_chosen.connect(_on_reward_card_chosen)
+	if not reward_phase.scrap_chosen.is_connected(_on_reward_scrap_chosen):
+		reward_phase.scrap_chosen.connect(_on_reward_scrap_chosen)
+	if not reward_phase.closed.is_connected(_on_reward_closed):
+		reward_phase.closed.connect(_on_reward_closed)
+	reward_phase.show_reward(reward_card_pool)
+
+func _on_reward_card_chosen(_card : CardResource) -> void:
+	pass # RewardPhase already called RunManager.add_card() — nothing else needed here
+
+func _on_reward_scrap_chosen(_amount : int) -> void:
+	pass # RewardPhase already called RunManager.add_scrap()
+
+func _on_reward_closed() -> void:
+	RunManager.set_deck(deck.get_all_cards())
+	level_won.emit(next_level_path)
+
+
+func _on_combat_won(_next_level_path : String) -> void:
+	SceneLoader.load_scene("res://scenes/map/map_view.tscn")
+
+func _on_combat_lost() -> void:
+	RunManager.clear_run()
+	SceneLoader.load_scene("res://scenes/menus/main_menu/main_menu.tscn")

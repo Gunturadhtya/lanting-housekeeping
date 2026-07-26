@@ -1,19 +1,20 @@
 [gd_scene format=3 uid="uid://d4icm3r4uj5c1"]
 
-[ext_resource type="Script" uid="uid://tiqelwol3rht" path="res://scenes/game_scene/levels/stage.gd" id="1_623lg"]
-[ext_resource type="PackedScene" uid="uid://dtkys06b2d0rd" path="res://ecs/entities/enemy_entity.tscn" id="2_sycfm"]
-[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="3_8avtb"]
-[ext_resource type="Script" uid="uid://bc7u4jeva5705" path="res://scenes/game_scene/tutorial_manager.gd" id="4_bsimd"]
-[ext_resource type="PackedScene" uid="uid://dvjsli6hvr27" path="res://ecs/entities/player_entity.tscn" id="4_sycfm"]
-[ext_resource type="PackedScene" uid="uid://dpfqgt58nq4hm" path="res://scenes/game_scene/tutorials/tutorial_1.tscn" id="5_fmabn"]
-[ext_resource type="PackedScene" uid="uid://m3mm7ngil71s" path="res://scenes/utilities/safe_area_margin_container.tscn" id="5_pmyid"]
-[ext_resource type="PackedScene" uid="uid://xbm1xxnioo0u" path="res://scenes/game_scene/card/hand_ui.tscn" id="6_handui"]
-[ext_resource type="Resource" uid="uid://crggj1qjvbr52" path="res://resources/card/melee_unit.tres" id="7_warrior"]
-[ext_resource type="Resource" uid="uid://tau0tox305a7" path="res://resources/card/ranged_unit.tres" id="8_archer"]
-[ext_resource type="Resource" uid="uid://srynk7uuyv22" path="res://resources/card/aoe_damage_item.tres" id="9_fireball"]
-[ext_resource type="PackedScene" uid="uid://c8deckviewui1" path="res://scenes/game_scene/card/deck_view_ui.tscn" id="10_deckview"]
+[ext_resource type="Script" uid="uid://tiqelwol3rht" path="res://scenes/game_scene/stage/combat_stage.gd" id="1_nsbd3"]
+[ext_resource type="PackedScene" uid="uid://dtkys06b2d0rd" path="res://ecs/entities/enemy_entity.tscn" id="2_1ha27"]
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="3_6mew0"]
+[ext_resource type="Resource" uid="uid://crggj1qjvbr52" path="res://resources/card/melee_unit.tres" id="4_dfy8o"]
+[ext_resource type="Resource" uid="uid://tau0tox305a7" path="res://resources/card/ranged_unit.tres" id="5_vi1cd"]
+[ext_resource type="Resource" uid="uid://srynk7uuyv22" path="res://resources/card/aoe_damage_item.tres" id="6_oe8jj"]
+[ext_resource type="Script" uid="uid://bc7u4jeva5705" path="res://scenes/game_scene/tutorial_manager.gd" id="7_0blov"]
+[ext_resource type="PackedScene" uid="uid://dpfqgt58nq4hm" path="res://scenes/game_scene/tutorials/tutorial_1.tscn" id="8_b4aor"]
+[ext_resource type="PackedScene" uid="uid://dvjsli6hvr27" path="res://ecs/entities/player_entity.tscn" id="9_pojro"]
+[ext_resource type="PackedScene" uid="uid://m3mm7ngil71s" path="res://scenes/utilities/safe_area_margin_container.tscn" id="10_gjaof"]
+[ext_resource type="PackedScene" uid="uid://xbm1xxnioo0u" path="res://scenes/game_scene/card/hand_ui.tscn" id="11_jdlv5"]
+[ext_resource type="PackedScene" uid="uid://c8deckviewui1" path="res://scenes/game_scene/card/deck_view_ui.tscn" id="12_aoe3c"]
+[ext_resource type="PackedScene" path="res://scenes/reward/reward_phase.tscn" id="13_1ha27"]
 
-[node name="Level1" type="Control" unique_id=235822082]
+[node name="CombatStage" type="Control" unique_id=235822082]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,10 +22,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("1_623lg")
-next_level_path = "uid://c3bhdvrv78jlb"
-enemy_scene = ExtResource("2_sycfm")
-starting_deck = Array[ExtResource("3_8avtb")]([ExtResource("7_warrior"), ExtResource("7_warrior"), ExtResource("8_archer"), ExtResource("8_archer"), ExtResource("9_fireball"), ExtResource("9_fireball"), ExtResource("9_fireball"), ExtResource("9_fireball"), ExtResource("9_fireball"), ExtResource("9_fireball")])
+script = ExtResource("1_nsbd3")
+next_level_path = "res://scenes/map/map_view.tscn"
+enemy_scene = ExtResource("2_1ha27")
+starting_deck = Array[ExtResource("3_6mew0")]([ExtResource("4_dfy8o"), ExtResource("4_dfy8o"), ExtResource("5_vi1cd"), ExtResource("5_vi1cd"), ExtResource("6_oe8jj"), ExtResource("6_oe8jj"), ExtResource("6_oe8jj"), ExtResource("6_oe8jj"), ExtResource("6_oe8jj"), ExtResource("6_oe8jj")])
 
 [node name="BackgroundColor" type="ColorRect" parent="." unique_id=1389548597]
 unique_name_in_owner = true
@@ -39,10 +40,10 @@ color = Color(0, 0, 0, 1)
 
 [node name="TutorialManager" type="Node" parent="." unique_id=928060640]
 unique_name_in_owner = true
-script = ExtResource("4_bsimd")
-tutorial_scenes = Array[PackedScene]([ExtResource("5_fmabn")])
+script = ExtResource("7_0blov")
+tutorial_scenes = Array[PackedScene]([ExtResource("8_b4aor")])
 
-[node name="Player" parent="." unique_id=1601606335 instance=ExtResource("4_sycfm")]
+[node name="Player" parent="." unique_id=1601606335 instance=ExtResource("9_pojro")]
 unique_name_in_owner = true
 position = Vector2(359, 1409)
 
@@ -63,7 +64,7 @@ unique_name_in_owner = true
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=12315797]
 
-[node name="SafeAreaMarginContainer" parent="HUD" unique_id=1572284943 instance=ExtResource("5_pmyid")]
+[node name="SafeAreaMarginContainer" parent="HUD" unique_id=1572284943 instance=ExtResource("10_gjaof")]
 
 [node name="MarginContainer" type="MarginContainer" parent="HUD/SafeAreaMarginContainer" unique_id=251823655]
 layout_mode = 0
@@ -82,6 +83,11 @@ theme_override_constants/separation = 8
 unique_name_in_owner = true
 layout_mode = 2
 text = "HP"
+
+[node name="ScrapLabel" type="Label" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=1744445825]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Scrap: 0"
 
 [node name="WaveLabel" type="Label" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=1148670224]
 unique_name_in_owner = true
@@ -124,7 +130,7 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="HandUI" parent="HUD/SafeAreaMarginContainer/HandArea" unique_id=1847131798 instance=ExtResource("6_handui")]
+[node name="HandUI" parent="HUD/SafeAreaMarginContainer/HandArea" unique_id=1847131798 instance=ExtResource("11_jdlv5")]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -135,7 +141,11 @@ layer = 10
 [node name="OverlayLayer" type="CanvasLayer" parent="." unique_id=603945408]
 layer = 20
 
-[node name="DeckViewUI" parent="OverlayLayer" unique_id=912361293 instance=ExtResource("10_deckview")]
+[node name="DeckViewUI" parent="OverlayLayer" unique_id=912361293 instance=ExtResource("12_aoe3c")]
 unique_name_in_owner = true
 visible = false
+layout_mode = 3
+
+[node name="RewardPhase" parent="OverlayLayer" unique_id=1701872980 instance=ExtResource("13_1ha27")]
+unique_name_in_owner = true
 layout_mode = 3
