@@ -10,6 +10,7 @@ enum ItemEffectType { DAMAGE, HEAL, CROWD_CONTROL }
 @export var description : String = ""
 @export var scrap_cost : int = 0
 @export var shop_price : int = 50
+@export var upgraded : bool = false
 
 @export_group("Unit")
 @export var unit_scene : PackedScene
@@ -28,3 +29,31 @@ enum ItemEffectType { DAMAGE, HEAL, CROWD_CONTROL }
 @export var item_heal_amount : int = 15
 @export var item_slow_multiplier : float = 0.5
 @export var item_slow_duration : float = 3.0
+
+const UPGRADE_STAT_MULTIPLIER : float = 1.25
+const UPGRADE_COST_REDUCTION : int = 5
+
+func create_upgraded() -> CardResource:
+	var upgraded_card : CardResource = duplicate(true)
+	if upgraded_card.upgraded:
+		return upgraded_card
+	upgraded_card.upgraded = true
+	if not upgraded_card.card_name.ends_with("+"):
+		upgraded_card.card_name += "+"
+	upgraded_card.scrap_cost = maxi(0, upgraded_card.scrap_cost - UPGRADE_COST_REDUCTION)
+
+	if upgraded_card.type == CardType.UNIT:
+		upgraded_card.unit_max_health = int(round(upgraded_card.unit_max_health * UPGRADE_STAT_MULTIPLIER))
+		upgraded_card.unit_attack_damage = int(round(upgraded_card.unit_attack_damage * UPGRADE_STAT_MULTIPLIER))
+	else:
+		match upgraded_card.item_effect_type:
+			ItemEffectType.HEAL:
+				upgraded_card.item_heal_amount = int(round(upgraded_card.item_heal_amount * UPGRADE_STAT_MULTIPLIER))
+			ItemEffectType.CROWD_CONTROL:
+				upgraded_card.item_slow_duration *= UPGRADE_STAT_MULTIPLIER
+				upgraded_card.item_radius *= UPGRADE_STAT_MULTIPLIER
+			_:
+				upgraded_card.item_damage = int(round(upgraded_card.item_damage * UPGRADE_STAT_MULTIPLIER))
+				upgraded_card.item_radius *= UPGRADE_STAT_MULTIPLIER
+
+	return upgraded_card

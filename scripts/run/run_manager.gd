@@ -100,6 +100,14 @@ static func remove_card(card : CardResource) -> bool:
 		GlobalState.save()
 	return result
 
+## Workshop
+
+static func upgrade_card(card : CardResource) -> CardResource:
+	var result := RunWorkshopOps.upgrade_card(_state(), card)
+	if result:
+		GlobalState.save()
+	return result
+
 ## Map progress
 
 static func get_map_data() -> Dictionary:
