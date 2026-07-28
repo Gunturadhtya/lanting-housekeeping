@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://otuu81av65h4"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_7ji8k"]
+
+[resource]
+script = ExtResource("1_7ji8k")
+card_name = "Heal"
+type = 0
+description = "Heal Allies (Unit Only)"
+item_effect_type = 1
+metadata/_custom_type_script = "uid://2rmpys7jmxpb"

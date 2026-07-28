@@ -5,10 +5,13 @@
 [ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="3_6mew0"]
 [ext_resource type="Resource" uid="uid://crggj1qjvbr52" path="res://resources/card/melee_unit.tres" id="4_dfy8o"]
 [ext_resource type="Resource" uid="uid://tau0tox305a7" path="res://resources/card/ranged_unit.tres" id="5_vi1cd"]
-[ext_resource type="Resource" uid="uid://srynk7uuyv22" path="res://resources/card/aoe_damage_item.tres" id="6_oe8jj"]
+[ext_resource type="Resource" uid="uid://srynk7uuyv22" path="res://resources/card/aoe_item.tres" id="6_oe8jj"]
 [ext_resource type="Script" uid="uid://bc7u4jeva5705" path="res://scenes/game_scene/tutorial_manager.gd" id="7_0blov"]
+[ext_resource type="Resource" uid="uid://otuu81av65h4" path="res://resources/card/heal_item.tres" id="7_vi1cd"]
 [ext_resource type="PackedScene" uid="uid://dpfqgt58nq4hm" path="res://scenes/game_scene/tutorials/tutorial_1.tscn" id="8_b4aor"]
+[ext_resource type="Resource" uid="uid://hd2bs4d0tsoh" path="res://resources/card/slow_item.tres" id="8_oe8jj"]
 [ext_resource type="PackedScene" uid="uid://dvjsli6hvr27" path="res://ecs/entities/player_entity.tscn" id="9_pojro"]
+[ext_resource type="Script" uid="uid://b0ctggu0ult2b" path="res://scenes/game_scene/card/card_drop_preview.gd" id="10_6mew0"]
 [ext_resource type="PackedScene" uid="uid://m3mm7ngil71s" path="res://scenes/utilities/safe_area_margin_container.tscn" id="10_gjaof"]
 [ext_resource type="PackedScene" uid="uid://xbm1xxnioo0u" path="res://scenes/game_scene/card/hand_ui.tscn" id="11_jdlv5"]
 [ext_resource type="PackedScene" uid="uid://c8deckviewui1" path="res://scenes/game_scene/card/deck_view_ui.tscn" id="12_aoe3c"]
@@ -25,7 +28,7 @@ mouse_filter = 2
 script = ExtResource("1_nsbd3")
 next_level_path = "res://scenes/map/map_view.tscn"
 enemy_scene = ExtResource("2_1ha27")
-reward_card_pool = Array[ExtResource("3_6mew0")]([ExtResource("6_oe8jj"), ExtResource("4_dfy8o"), ExtResource("5_vi1cd")])
+reward_card_pool = Array[ExtResource("3_6mew0")]([ExtResource("6_oe8jj"), ExtResource("4_dfy8o"), ExtResource("5_vi1cd"), ExtResource("7_vi1cd"), ExtResource("8_oe8jj")])
 
 [node name="BackgroundColor" type="ColorRect" parent="." unique_id=1389548597]
 unique_name_in_owner = true
@@ -46,6 +49,13 @@ tutorial_scenes = Array[PackedScene]([ExtResource("8_b4aor")])
 [node name="Player" parent="." unique_id=1601606335 instance=ExtResource("9_pojro")]
 unique_name_in_owner = true
 position = Vector2(359, 1409)
+
+[node name="DropPreview" type="Control" parent="." unique_id=2108424360]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("10_6mew0")
 
 [node name="SpawnPoints" type="Node2D" parent="." unique_id=732777320]
 unique_name_in_owner = true

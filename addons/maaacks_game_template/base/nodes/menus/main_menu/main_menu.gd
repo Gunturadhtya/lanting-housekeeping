@@ -27,10 +27,10 @@ var base_starting_deck : Array[CardResource] = [
 	preload("res://resources/card/melee_unit.tres"),
 	preload("res://resources/card/ranged_unit.tres"),
 	preload("res://resources/card/ranged_unit.tres"),
-	preload("res://resources/card/aoe_damage_item.tres"),
-	preload("res://resources/card/aoe_damage_item.tres"),
-	preload("res://resources/card/aoe_damage_item.tres"),
-	preload("res://resources/card/aoe_damage_item.tres"),
+	preload("res://resources/card/aoe_item.tres"),
+	preload("res://resources/card/aoe_item.tres"),
+	preload("res://resources/card/heal_item.tres"),
+	preload("res://resources/card/slow_item.tres"),
 ]
 
 @onready var menu_container = %MenuContainer

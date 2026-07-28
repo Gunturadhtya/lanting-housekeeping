@@ -2,6 +2,8 @@ class_name CardUI
 extends PanelContainer
 
 signal drag_ended(card_ui : CardUI, drop_global_position : Vector2)
+signal drag_started(card_ui : CardUI, global_position : Vector2)
+signal drag_updated(card_ui : CardUI, global_position : Vector2)
 
 @export var card : CardResource
 @export var stuck_drag_timeout : float = 4.0
@@ -43,7 +45,13 @@ func setup(new_card : CardResource) -> void:
 		if card.type == CardResource.CardType.UNIT:
 			stat_label.text = "HP %d  DMG %d" % [card.unit_max_health, card.unit_attack_damage]
 		else:
-			stat_label.text = "DMG %d  AoE %d" % [card.item_damage, int(card.item_radius)]
+			match card.item_effect_type:
+				CardResource.ItemEffectType.HEAL:
+					stat_label.text = "HEAL %d" % card.item_heal_amount
+				CardResource.ItemEffectType.CROWD_CONTROL:
+					stat_label.text = "SLOW %d%%  AoE %d" % [int((1.0 - card.item_slow_multiplier) * 100), int(card.item_radius)]
+				_:
+					stat_label.text = "DMG %d  AoE %d" % [card.item_damage, int(card.item_radius)]
 
 func set_playable(playable : bool) -> void:
 	_playable = playable
@@ -77,6 +85,7 @@ func _begin_drag(pointer_index : int, global_pos : Vector2) -> void:
 	z_index = 100
 	set_process_input(true)
 	_stuck_timer.start(stuck_drag_timeout)
+	drag_started.emit(self, global_pos)
 
 func _input(event : InputEvent) -> void:
 	if not _dragging:
@@ -85,6 +94,7 @@ func _input(event : InputEvent) -> void:
 		if event is InputEventMouseMotion:
 			global_position = event.global_position - _drag_offset
 			_stuck_timer.start(stuck_drag_timeout)
+			drag_updated.emit(self, event.global_position)
 			get_viewport().set_input_as_handled()
 		elif event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			_finish_drag(event.global_position)
@@ -93,6 +103,7 @@ func _input(event : InputEvent) -> void:
 		if event is InputEventScreenDrag and event.index == _pointer_index:
 			global_position = event.position - _drag_offset
 			_stuck_timer.start(stuck_drag_timeout)
+			drag_updated.emit(self, event.position)
 			get_viewport().set_input_as_handled()
 		elif event is InputEventScreenTouch and event.index == _pointer_index and not event.pressed:
 			_finish_drag(event.position)

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://hd2bs4d0tsoh"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_gyaon"]
+
+[resource]
+script = ExtResource("1_gyaon")
+card_name = "Slow"
+type = 0
+description = "Slow Enemies on Area for certain duration"
+item_effect_type = 2
+metadata/_custom_type_script = "uid://2rmpys7jmxpb"

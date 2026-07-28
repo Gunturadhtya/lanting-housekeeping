@@ -29,6 +29,7 @@ signal level_changed(level_path : String)
 @onready var wave_label : Label = %WaveLabel
 @onready var deck_view_ui : DeckViewUI = %DeckViewUI
 @onready var scrap_label : Label = %ScrapLabel
+@onready var drop_preview : CardDropPreview = %DropPreview
 
 var world := ECSWorld.new()
 var systems : Array[ECSSystem] = []
@@ -63,6 +64,10 @@ func _ready() -> void:
 	_deck.deck_changed.connect(_update_deck_label)
 	hand_ui.hand_size = hand_size
 	hand_ui.card_play_requested.connect(_on_card_play_requested)
+	drop_preview.world = world
+	hand_ui.card_drag_started.connect(_on_card_drag_started)
+	hand_ui.card_drag_updated.connect(_on_card_drag_updated)
+	hand_ui.card_drag_ended.connect(_on_card_drag_ended)
 	deck_label.pressed.connect(_on_deck_label_pressed)
 
 	_build_controllers()
@@ -148,6 +153,17 @@ func _apply_phase(phase : int) -> void:
 
 func _on_card_play_requested(card : CardResource, drop_global_position : Vector2, card_ui : CardUI) -> void:
 	_card_play.handle_play(card, drop_global_position, card_ui)
+
+func _on_card_drag_started(card : CardResource, global_position : Vector2) -> void:
+	if card.type != CardResource.CardType.ITEM or not _phase_controller.is_combat():
+		return
+	drop_preview.begin(card, global_position)
+
+func _on_card_drag_updated(card : CardResource, global_position : Vector2) -> void:
+	drop_preview.update_target(global_position)
+
+func _on_card_drag_ended(_card : CardResource) -> void:
+	drop_preview.finish()
 
 ## Waves
 

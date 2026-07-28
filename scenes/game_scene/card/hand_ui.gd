@@ -2,6 +2,10 @@ class_name HandUI
 extends HBoxContainer
 
 signal card_play_requested(card : CardResource, drop_global_position : Vector2, card_ui : CardUI)
+signal card_drag_started(card : CardResource, global_position : Vector2)
+signal card_drag_updated(card : CardResource, global_position : Vector2)
+signal card_drag_ended(card : CardResource)
+
 
 @export var card_ui_scene : PackedScene
 @export var hand_size : int = 4
@@ -29,10 +33,19 @@ func _add_card_ui(card : CardResource) -> void:
 	add_child(ui)
 	ui.setup(card)
 	ui.drag_layer = drag_layer
+	ui.drag_started.connect(_on_card_drag_started)
+	ui.drag_updated.connect(_on_card_drag_updated)
 	ui.drag_ended.connect(_on_card_drag_ended)
 	_card_uis.append(ui)
 
+func _on_card_drag_started(card_ui : CardUI, global_position : Vector2) -> void:
+	card_drag_started.emit(card_ui.card, global_position)
+
+func _on_card_drag_updated(card_ui : CardUI, global_position : Vector2) -> void:
+	card_drag_updated.emit(card_ui.card, global_position)
+
 func _on_card_drag_ended(card_ui : CardUI, drop_global_position : Vector2) -> void:
+	card_drag_ended.emit(card_ui.card)
 	card_play_requested.emit(card_ui.card, drop_global_position, card_ui)
 
 func confirm_play(card_ui : CardUI) -> void:
