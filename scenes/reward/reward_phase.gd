@@ -28,8 +28,22 @@ func show_reward(card_pool : Array[CardResource], scrap_amount : int = -1) -> vo
 	for child in card_row.get_children():
 		child.queue_free()
 	for card in _pick_random_cards(card_pool, 3):
-		#print("add card ", card.card_name)
-		card_row.add_child(_build_card_option(card))
+		var wrapper := Control.new()
+		wrapper.custom_minimum_size = Vector2(110, 150)
+		card_row.add_child(wrapper)          
+
+		var ui : CardUI = card_ui_scene.instantiate()
+		wrapper.add_child(ui)                
+		ui.preview_mode = true
+		ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		ui.setup(card)                       
+
+		var overlay := Button.new()
+		overlay.flat = true
+		overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		overlay.focus_mode = Control.FOCUS_NONE
+		overlay.pressed.connect(_choose_card.bind(card))
+		wrapper.add_child(overlay)
 
 	scrap_button.text = "Take %d Scrap" % _scrap_amount
 	title_label.text = "Victory! Choose a Reward"
@@ -44,25 +58,6 @@ func _pick_random_cards(pool : Array[CardResource], count : int) -> Array[CardRe
 			break
 		result.append(card)
 	return result
-
-func _build_card_option(card : CardResource) -> Control:
-	var wrapper := Control.new()
-	wrapper.custom_minimum_size = Vector2(110, 150)
-
-	var ui : CardUI = card_ui_scene.instantiate()
-	wrapper.add_child(ui)
-	ui.preview_mode = true
-	ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	ui.setup(card)
-
-	var overlay := Button.new()
-	overlay.flat = true
-	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	overlay.focus_mode = Control.FOCUS_NONE
-	overlay.pressed.connect(_choose_card.bind(card))
-	wrapper.add_child(overlay)
-
-	return wrapper
 
 func _choose_card(card : CardResource) -> void:
 	if _resolved:
