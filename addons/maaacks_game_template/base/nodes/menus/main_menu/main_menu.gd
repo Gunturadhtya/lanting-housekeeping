@@ -29,6 +29,8 @@ var base_starting_deck : Array[CardResource] = [
 	preload("res://resources/card/ranged_unit.tres"),
 	preload("res://resources/card/aoe_damage_item.tres"),
 	preload("res://resources/card/aoe_damage_item.tres"),
+	preload("res://resources/card/aoe_damage_item.tres"),
+	preload("res://resources/card/aoe_damage_item.tres"),
 ]
 
 @onready var menu_container = %MenuContainer

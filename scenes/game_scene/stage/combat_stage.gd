@@ -12,7 +12,6 @@ signal level_changed(level_path : String)
 @export var enemies_per_wave : int = 5
 @export var total_waves : int = 3
 
-@export var starting_deck : Array[CardResource] = []
 @export var hand_size : int = 4
 @export var hand_area_height : float = 190.0
 @export var reward_card_pool : Array[CardResource] = []
@@ -112,11 +111,8 @@ func _build_controllers() -> void:
 	_reward.victory_confirmed.connect(func(path : String) -> void: level_won.emit(path))
 
 func _get_starting_deck() -> Array[CardResource]:
-	if RunManager.has_active_run():
-		var run_deck := RunManager.get_deck()
-		if not run_deck.is_empty():
-			return run_deck
-	return starting_deck
+	var run_deck := RunManager.get_deck()
+	return run_deck
 
 func _physics_process(delta : float) -> void:
 	if _game_over:
