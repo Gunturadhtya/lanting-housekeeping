@@ -79,6 +79,12 @@ func get_all_cards() -> Array[CardResource]:
 		result.append_array(_hand_provider.call())
 	return result
 
+func add_card(card : CardResource) -> void:
+	if card == null:
+		return
+	_discard_piles[card.type].append(card)
+	deck_changed.emit()
+
 func draw_count() -> int:
 	return _draw_piles[_active_type].size()
 

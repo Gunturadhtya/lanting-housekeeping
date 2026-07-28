@@ -68,8 +68,7 @@ func _choose_card(card : CardResource) -> void:
 	if _resolved:
 		return
 	_resolved = true
-	RunManager.add_card(card)
-	card_chosen.emit(card)
+	card_chosen.emit(card) 
 	_close()
 
 func _on_scrap_pressed() -> void:
