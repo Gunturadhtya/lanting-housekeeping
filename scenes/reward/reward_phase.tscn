@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://cs0hgm4wcbotb"]
 
-[ext_resource type="Script" path="res://scenes/reward/reward_phase.gd" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/game_scene/card/card_ui.tscn" id="2"]
+[ext_resource type="Script" uid="uid://du11c8jm3vw33" path="res://scenes/reward/reward_phase.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://b6e0avsasc1y1" path="res://scenes/game_scene/card/card_ui.tscn" id="2"]
 
-[node name="RewardPhase" type="Control"]
+[node name="RewardPhase" type="Control" unique_id=1516973800]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -13,54 +14,54 @@ mouse_filter = 1
 script = ExtResource("1")
 card_ui_scene = ExtResource("2")
 
-[node name="Dim" type="ColorRect" parent="."]
+[node name="Dim" type="ColorRect" parent="." unique_id=1944362069]
 unique_name_in_owner = true
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.75)
 mouse_filter = 1
+color = Color(0, 0, 0, 0.75)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
-anchors_preset = 15
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=829650147]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=128288420]
 custom_minimum_size = Vector2(660, 420)
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=1704224398]
 layout_mode = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=1051598554]
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=537009274]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "Victory! Choose a Reward"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 24
 
-[node name="CardRow" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="CardRow" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=633759582]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-alignment = 1
 theme_override_constants/separation = 16
+alignment = 1
 
-[node name="ScrapButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="ScrapButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1944805101]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Take Scrap"

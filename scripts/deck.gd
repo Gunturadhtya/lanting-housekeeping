@@ -12,12 +12,16 @@ var _discard_piles : Dictionary = {
 	CardResource.CardType.ITEM: [],
 }
 var _active_type : int = CardResource.CardType.UNIT
+var _hand_provider : Callable = Callable()
 
 func _init(starting_cards : Array[CardResource] = []) -> void:
 	for card in starting_cards:
 		_draw_piles[card.type].append(card)
 	for type in _draw_piles.keys():
 		_draw_piles[type].shuffle()
+
+func set_hand_provider(provider : Callable) -> void:
+	_hand_provider = provider
 
 func set_active_type(type : int) -> void:
 	if type == _active_type:
@@ -71,6 +75,8 @@ func get_all_cards() -> Array[CardResource]:
 		result.append_array(_draw_piles[type])
 	for type in _discard_piles.keys():
 		result.append_array(_discard_piles[type])
+	if _hand_provider.is_valid():
+		result.append_array(_hand_provider.call())
 	return result
 
 func draw_count() -> int:

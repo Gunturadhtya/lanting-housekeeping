@@ -68,6 +68,7 @@ func _ready() -> void:
 	_build_controllers()
 	
 	hand_ui.setup(_deck, drag_layer)
+	_deck.set_hand_provider(hand_ui.get_cards_in_hand)
 
 	level_won.connect(_on_combat_won)
 	level_lost.connect(_on_combat_lost)

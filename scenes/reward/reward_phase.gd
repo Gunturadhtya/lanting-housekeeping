@@ -28,6 +28,7 @@ func show_reward(card_pool : Array[CardResource], scrap_amount : int = -1) -> vo
 	for child in card_row.get_children():
 		child.queue_free()
 	for card in _pick_random_cards(card_pool, 3):
+		#print("add card ", card.card_name)
 		card_row.add_child(_build_card_option(card))
 
 	scrap_button.text = "Take %d Scrap" % _scrap_amount
