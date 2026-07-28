@@ -7,5 +7,6 @@ script = ExtResource("1_7ji8k")
 card_name = "Heal"
 type = 0
 description = "Heal Allies (Unit Only)"
+scrap_cost = 15
 item_effect_type = 1
 metadata/_custom_type_script = "uid://2rmpys7jmxpb"

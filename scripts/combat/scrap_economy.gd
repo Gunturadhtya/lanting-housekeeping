@@ -13,3 +13,14 @@ func collect(amount : int) -> void:
 	scrap += amount
 	RunManager.add_scrap(amount)
 	scrap_changed.emit(scrap)
+
+func can_afford(amount : int) -> bool:
+	return scrap >= amount
+
+func spend(amount : int) -> bool:
+	if not can_afford(amount):
+		return false
+	scrap -= amount
+	RunManager.spend_scrap(amount)
+	scrap_changed.emit(scrap)
+	return true

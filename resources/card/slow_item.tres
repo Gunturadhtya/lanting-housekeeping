@@ -7,5 +7,6 @@ script = ExtResource("1_gyaon")
 card_name = "Slow"
 type = 0
 description = "Slow Enemies on Area for certain duration"
+scrap_cost = 15
 item_effect_type = 2
 metadata/_custom_type_script = "uid://2rmpys7jmxpb"

@@ -101,7 +101,11 @@ func _build_controllers() -> void:
 
 	_selection = UnitSelectionController.new(world, _unit_placement, _phase_controller, drop_zone)
 
-	_card_play = CardPlayController.new(_phase_controller, _unit_placement, world, hand_ui, drop_zone)
+	_scrap = ScrapEconomy.new()
+	_scrap.scrap_changed.connect(_hud_show_scrap)
+
+
+	_card_play = CardPlayController.new(_phase_controller, _unit_placement, world, hand_ui, drop_zone, _scrap)
 
 	_lifecycle = EntityLifecycleHandler.new(world, _player_id, _deck, _unit_placement, _selection)
 	_lifecycle.player_died.connect(_on_player_died)
@@ -109,12 +113,9 @@ func _build_controllers() -> void:
 
 	_hud = CombatHud.new(health_label, deck_label, wave_label, scrap_label, phase_label, phase_button)
 
-	_scrap = ScrapEconomy.new()
-	_scrap.scrap_changed.connect(_hud_show_scrap)
-	_scrap.initialize()
-
 	_reward = RewardCoordinator.new(reward_phase, _deck, next_level_path)
 	_reward.victory_confirmed.connect(func(path : String) -> void: level_won.emit(path))
+	_scrap.initialize()
 
 func _get_starting_deck() -> Array[CardResource]:
 	var run_deck := RunManager.get_deck()

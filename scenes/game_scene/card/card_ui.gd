@@ -42,16 +42,17 @@ func setup(new_card : CardResource) -> void:
 	if art_rect and card.texture:
 		art_rect.texture = card.texture
 	if stat_label:
+		var cost_suffix := "  Cost %d" % card.scrap_cost
 		if card.type == CardResource.CardType.UNIT:
-			stat_label.text = "HP %d  DMG %d" % [card.unit_max_health, card.unit_attack_damage]
+			stat_label.text = "HP %d  DMG %d%s" % [card.unit_max_health, card.unit_attack_damage, cost_suffix]
 		else:
 			match card.item_effect_type:
 				CardResource.ItemEffectType.HEAL:
-					stat_label.text = "HEAL %d" % card.item_heal_amount
+					stat_label.text = "HEAL %d%s" % [card.item_heal_amount, cost_suffix]
 				CardResource.ItemEffectType.CROWD_CONTROL:
-					stat_label.text = "SLOW %d%%  AoE %d" % [int((1.0 - card.item_slow_multiplier) * 100), int(card.item_radius)]
+					stat_label.text = "SLOW %d%%  AoE %d%s" % [int((1.0 - card.item_slow_multiplier) * 100), int(card.item_radius), cost_suffix]
 				_:
-					stat_label.text = "DMG %d  AoE %d" % [card.item_damage, int(card.item_radius)]
+					stat_label.text = "DMG %d  AoE %d%s" % [card.item_damage, int(card.item_radius), cost_suffix]
 
 func set_playable(playable : bool) -> void:
 	_playable = playable

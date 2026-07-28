@@ -8,6 +8,7 @@ enum ItemEffectType { DAMAGE, HEAL, CROWD_CONTROL }
 @export var type : CardType = CardType.UNIT
 @export var texture : Texture2D
 @export var description : String = ""
+@export var scrap_cost : int = 0
 
 @export_group("Unit")
 @export var unit_scene : PackedScene
