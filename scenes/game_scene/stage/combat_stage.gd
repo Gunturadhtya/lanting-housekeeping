@@ -90,7 +90,7 @@ func _get_starting_deck() -> Array[CardResource]:
 func _physics_process(delta : float) -> void:
 	if game_over:
 		return
-	if phase == Phase.COMBAT:
+	else:
 		for system in systems:
 			system.process(world, delta)
 	_update_health_bar()
@@ -210,7 +210,8 @@ func _on_enemy_node_freed() -> void:
 		if current_wave >= total_waves:
 			_show_victory_reward()
 		else:
-			_start_wave()
+			_set_phase(Phase.PREPARATION)
+			phase_button.visible = true
 
 
 func _on_entity_died(entity_id : int) -> void:
@@ -252,7 +253,7 @@ func _update_deck_label() -> void:
 
 ## Point-and-click
 func _unhandled_input(event : InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and phase == Phase.PREPARATION:
 		_handle_battlefield_click(event.global_position)
 
 func _handle_battlefield_click(click_position : Vector2) -> void:
@@ -261,16 +262,17 @@ func _handle_battlefield_click(click_position : Vector2) -> void:
 	var clicked_unit_id := _find_unit_at(click_position)
 	if clicked_unit_id != -1:
 		selected_unit_id = clicked_unit_id
-		print("Selected unit: ", selected_unit_id)
+		#print("Selected unit: ", selected_unit_id)
 		_update_selection_indicator()
 		return
 	if selected_unit_id != -1:
 		var node := world.get_node(selected_unit_id)
 		if node and node.has_method("move_to"):
-			print("Moving unit ", selected_unit_id, " to ", click_position)
+			#print("Moving unit ", selected_unit_id, " to ", click_position)
 			node.move_to(click_position)
 		else:
-			print("Move failed - node missing or no move_to method: ", node)
+			#print("Move failed - node missing or no move_to method: ", node)
+			pass
 		selected_unit_id = -1
 		_update_selection_indicator()
 
@@ -305,19 +307,9 @@ func _update_scrap_label() -> void:
 ## Reward
 func _show_victory_reward() -> void:
 	game_over = true
-	if not reward_phase.card_chosen.is_connected(_on_reward_card_chosen):
-		reward_phase.card_chosen.connect(_on_reward_card_chosen)
-	if not reward_phase.scrap_chosen.is_connected(_on_reward_scrap_chosen):
-		reward_phase.scrap_chosen.connect(_on_reward_scrap_chosen)
 	if not reward_phase.closed.is_connected(_on_reward_closed):
 		reward_phase.closed.connect(_on_reward_closed)
 	reward_phase.show_reward(reward_card_pool)
-
-func _on_reward_card_chosen(_card : CardResource) -> void:
-	pass # RewardPhase already called RunManager.add_card() — nothing else needed here
-
-func _on_reward_scrap_chosen(_amount : int) -> void:
-	pass # RewardPhase already called RunManager.add_scrap()
 
 func _on_reward_closed() -> void:
 	RunManager.set_deck(deck.get_all_cards())
