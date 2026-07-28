@@ -9,6 +9,7 @@ enum ItemEffectType { DAMAGE, HEAL, CROWD_CONTROL }
 @export var texture : Texture2D
 @export var description : String = ""
 @export var scrap_cost : int = 0
+@export var shop_price : int = 50
 
 @export_group("Unit")
 @export var unit_scene : PackedScene

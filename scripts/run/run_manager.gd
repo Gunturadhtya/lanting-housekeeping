@@ -9,6 +9,7 @@ const FILE_PATH : String = "res://scripts/run/run_manager.gd"
 @export var max_hp : int = 0
 @export var scrap : int = 0
 @export var deck : Array[CardResource] = []
+@export var card_removals : int = 0
 
 @export var map_data : Dictionary = {}
 @export var current_node_id : String = ""
@@ -87,6 +88,17 @@ static func set_deck(cards : Array[CardResource]) -> void:
 static func add_card(card : CardResource) -> void:
 	RunDeckOps.add_card(_state(), card)
 	GlobalState.save()
+
+## Shop
+
+static func get_card_removals() -> int:
+	return _state().card_removals
+
+static func remove_card(card : CardResource) -> bool:
+	var result := RunShopOps.remove_card(_state(), card)
+	if result:
+		GlobalState.save()
+	return result
 
 ## Map progress
 

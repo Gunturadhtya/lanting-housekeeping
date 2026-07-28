@@ -1,0 +1,110 @@
+[gd_scene format=3 uid="uid://cshopstage001"]
+
+[ext_resource type="Script" path="res://scenes/shop/shop_stage.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/game_scene/card/card_ui.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/shop/shop_remove_view.tscn" id="3"]
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="4"]
+[ext_resource type="Resource" uid="uid://crggj1qjvbr52" path="res://resources/card/melee_unit.tres" id="5"]
+[ext_resource type="Resource" uid="uid://tau0tox305a7" path="res://resources/card/ranged_unit.tres" id="6"]
+[ext_resource type="Resource" uid="uid://srynk7uuyv22" path="res://resources/card/aoe_item.tres" id="7"]
+[ext_resource type="Resource" uid="uid://otuu81av65h4" path="res://resources/card/heal_item.tres" id="8"]
+[ext_resource type="Resource" uid="uid://hd2bs4d0tsoh" path="res://resources/card/slow_item.tres" id="9"]
+
+[node name="ShopStage" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1")
+card_ui_scene = ExtResource("2")
+shop_card_pool = Array[ExtResource("4")]([ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9")])
+
+[node name="BackgroundColor" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.05, 0.09, 0.1, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="HeaderRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Floating Market (Pasar Terapung)"
+theme_override_font_sizes/font_size = 22
+autowrap_mode = 2
+
+[node name="ScrapLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Scrap: 0"
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 2
+
+[node name="WaresLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Wares for sale"
+theme_override_font_sizes/font_size = 16
+
+[node name="OfferScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 2
+vertical_scroll_mode = 0
+
+[node name="OfferRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/OfferScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="ButtonRow" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="RemoveButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Remove a Card — 75"
+
+[node name="LeaveButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Leave Market"
+
+[node name="ShopRemoveView" parent="." instance=ExtResource("3")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

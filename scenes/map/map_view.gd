@@ -147,7 +147,7 @@ func _on_map_view_node_activated(node_id, node_type) -> void:
 		MapGenerator.NodeType.COMBAT, MapGenerator.NodeType.ELITE, MapGenerator.NodeType.BOSS:
 			SceneLoader.load_scene("res://scenes/game_scene/stage/combat_stage.tscn")
 		MapGenerator.NodeType.MARKET:
-			pass # TODO
+			SceneLoader.load_scene("res://scenes/shop/shop_stage.tscn")
 		MapGenerator.NodeType.WORKSHOP:
 			pass # TODO
 		MapGenerator.NodeType.EVENT, MapGenerator.NodeType.TREASURE:
