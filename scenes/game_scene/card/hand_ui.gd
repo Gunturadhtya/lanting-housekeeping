@@ -21,7 +21,7 @@ func setup(new_deck : Deck, new_drag_layer : Node = null) -> void:
 
 func refill_hand() -> void:
 	while _card_uis.size() < hand_size:
-		if deck.draw_count() == 0 and _card_uis.is_empty() and deck.active_type() == CardResource.CardType.ITEM:
+		if deck.draw_count() == 0 and _card_uis.is_empty():
 			deck.reshuffle_if_hand_empty(deck.active_type())
 		var card : CardResource = deck.draw_card()
 		if card == null:
@@ -66,3 +66,13 @@ func get_cards_in_hand() -> Array[CardResource]:
 	for ui in _card_uis:
 		result.append(ui.card)
 	return result
+
+func discard_cards_of_type(type : int) -> void:
+	var remaining : Array[CardUI] = []
+	for ui in _card_uis:
+		if ui.card.type == type:
+			deck.discard(ui.card)
+			ui.queue_free()
+		else:
+			remaining.append(ui)
+	_card_uis = remaining

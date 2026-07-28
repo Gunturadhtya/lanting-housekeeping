@@ -139,11 +139,13 @@ func _on_phase_button_pressed() -> void:
 func _apply_phase(phase : int) -> void:
 	_hud.show_phase(phase)
 	if phase == CombatPhaseController.Phase.PREPARATION:
+		hand_ui.discard_cards_of_type(CardResource.CardType.ITEM)
 		hand_ui.set_playable_type(CardResource.CardType.UNIT)
 		_deck.set_active_type(CardResource.CardType.UNIT)
 	else:
 		if !debug:
 			phase_button.visible = false
+		hand_ui.discard_cards_of_type(CardResource.CardType.UNIT)
 		hand_ui.set_playable_type(CardResource.CardType.ITEM)
 		_deck.set_active_type(CardResource.CardType.ITEM)
 		_wave_spawner.start_next_wave()
