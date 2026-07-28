@@ -5,8 +5,6 @@ signal level_won(level_path : String)
 @warning_ignore("unused_signal")
 signal level_changed(level_path : String)
 
-enum Phase { PREPARATION, COMBAT }
-
 @export var debug : bool
 @export_file("*.tscn") var next_level_path : String
 @export var enemy_scene : PackedScene
@@ -17,7 +15,7 @@ enum Phase { PREPARATION, COMBAT }
 @export var starting_deck : Array[CardResource] = []
 @export var hand_size : int = 4
 @export var hand_area_height : float = 190.0
-@export var reward_card_pool : Array[CardResource] = []  
+@export var reward_card_pool : Array[CardResource] = []
 
 @onready var reward_phase : RewardPhase = %RewardPhase
 @onready var player : PlayerEntity = %Player
@@ -35,18 +33,20 @@ enum Phase { PREPARATION, COMBAT }
 
 var world := ECSWorld.new()
 var systems : Array[ECSSystem] = []
-var player_id : int = -1
-var scrap : int = 0
-var current_wave : int = 0
-var enemies_spawned_this_wave : int = 0
-var enemies_alive : int = 0
-var game_over : bool = false
 
-var deck : Deck
-var phase : int = Phase.PREPARATION
-var selected_unit_id : int = -1
-var placed_unit_ids : Array[int] = []
-var placed_unit_cards : Dictionary = {} 
+var _deck : Deck
+var _player_id : int = -1
+var _game_over : bool = false
+
+var _phase_controller : CombatPhaseController
+var _wave_spawner : WaveSpawner
+var _unit_placement : UnitPlacementService
+var _selection : UnitSelectionController
+var _card_play : CardPlayController
+var _lifecycle : EntityLifecycleHandler
+var _scrap : ScrapEconomy
+var _hud : CombatHud
+var _reward : RewardCoordinator
 
 func _ready() -> void:
 	systems = [
@@ -56,29 +56,60 @@ func _ready() -> void:
 		HealthSystem.new(),
 		RenderSyncSystem.new(),
 	]
-	world.entity_died.connect(_on_entity_died)
-	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
 
 	player.setup(world)
-	player_id = player.entity_id
+	_player_id = player.entity_id
 
-	deck = Deck.new(_get_starting_deck())
-	deck.deck_changed.connect(_update_deck_label)
+	_deck = Deck.new(_get_starting_deck())
+	_deck.deck_changed.connect(_update_deck_label)
 	hand_ui.hand_size = hand_size
-	hand_ui.setup(deck, drag_layer)
 	hand_ui.card_play_requested.connect(_on_card_play_requested)
 	deck_label.pressed.connect(_on_deck_label_pressed)
+
+	_build_controllers()
 	
+	hand_ui.setup(_deck, drag_layer)
+
 	level_won.connect(_on_combat_won)
 	level_lost.connect(_on_combat_lost)
-
 	phase_button.pressed.connect(_on_phase_button_pressed)
-	_set_phase(Phase.PREPARATION)
 
-	scrap = RunManager.get_scrap() if RunManager.has_active_run() else 0
+	_apply_phase(_phase_controller.phase)
 	_update_health_bar()
 	_update_deck_label()
-	_update_scrap_label()
+
+func _build_controllers() -> void:
+	_phase_controller = CombatPhaseController.new()
+	_phase_controller.phase_changed.connect(_apply_phase)
+
+	_wave_spawner = WaveSpawner.new(
+		world, self, enemy_scene, spawn_points, spawn_timer, player,
+		spawn_interval, enemies_per_wave, total_waves
+	)
+	_wave_spawner.wave_started.connect(_hud_show_wave)
+	_wave_spawner.wave_cleared.connect(_on_wave_cleared)
+	_wave_spawner.all_waves_cleared.connect(_on_all_waves_cleared)
+
+	_unit_placement = UnitPlacementService.new(world, self)
+
+	var drop_zone := DropZoneValidator.new(self, hand_area_height)
+
+	_selection = UnitSelectionController.new(world, _unit_placement, _phase_controller, drop_zone)
+
+	_card_play = CardPlayController.new(_phase_controller, _unit_placement, world, hand_ui, drop_zone)
+
+	_lifecycle = EntityLifecycleHandler.new(world, _player_id, _deck, _unit_placement, _selection)
+	_lifecycle.player_died.connect(_on_player_died)
+	_lifecycle.scrap_awarded.connect(_on_scrap_awarded)
+
+	_hud = CombatHud.new(health_label, deck_label, wave_label, scrap_label, phase_label, phase_button)
+
+	_scrap = ScrapEconomy.new()
+	_scrap.scrap_changed.connect(_hud_show_scrap)
+	_scrap.initialize()
+
+	_reward = RewardCoordinator.new(reward_phase, _deck, next_level_path)
+	_reward.victory_confirmed.connect(func(path : String) -> void: level_won.emit(path))
 
 func _get_starting_deck() -> Array[CardResource]:
 	if RunManager.has_active_run():
@@ -88,237 +119,91 @@ func _get_starting_deck() -> Array[CardResource]:
 	return starting_deck
 
 func _physics_process(delta : float) -> void:
-	if game_over:
+	if _game_over:
 		return
-	else:
-		for system in systems:
-			system.process(world, delta)
+	for system in systems:
+		system.process(world, delta)
 	_update_health_bar()
-	_update_scrap_label()
-	
 
-func _start_wave() -> void:
-	current_wave += 1
-	enemies_spawned_this_wave = 0
-	wave_label.text = "Wave %d / %d" % [current_wave, total_waves]
-	spawn_timer.start(spawn_interval)
+func _unhandled_input(event : InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_selection.handle_click(event.global_position)
 
-## Phases
+## Phase
+
 func _on_phase_button_pressed() -> void:
-	if phase == Phase.PREPARATION:
-		if !debug :
-			phase_button.visible = false
-		_set_phase(Phase.COMBAT)
-	else:
-		_set_phase(Phase.PREPARATION)
+	_phase_controller.toggle()
 
-func _set_phase(new_phase : int) -> void:
-	phase = new_phase
-	selected_unit_id = -1
-	if phase == Phase.PREPARATION:
-		phase_label.text = "Preparation Phase"
-		phase_button.text = "Start Combat"
+func _apply_phase(phase : int) -> void:
+	_hud.show_phase(phase)
+	if phase == CombatPhaseController.Phase.PREPARATION:
 		hand_ui.set_playable_type(CardResource.CardType.UNIT)
-		deck.set_active_type(CardResource.CardType.UNIT)
+		_deck.set_active_type(CardResource.CardType.UNIT)
 	else:
-		phase_label.text = "Combat Phase"
-		phase_button.text = "Back to Prep"
+		if !debug:
+			phase_button.visible = false
 		hand_ui.set_playable_type(CardResource.CardType.ITEM)
-		deck.set_active_type(CardResource.CardType.ITEM)
-		enemies_spawned_this_wave = 0
-		_start_wave()
+		_deck.set_active_type(CardResource.CardType.ITEM)
+		_wave_spawner.start_next_wave()
 	hand_ui.refill_hand()
 
 ## Card plays
+
 func _on_card_play_requested(card : CardResource, drop_global_position : Vector2, card_ui : CardUI) -> void:
-	if not _is_valid_drop(drop_global_position):
-		hand_ui.cancel_play(card_ui)
+	_card_play.handle_play(card, drop_global_position, card_ui)
+
+## Waves
+
+func _on_wave_cleared(_wave : int) -> void:
+	if _game_over:
 		return
+	_phase_controller.set_phase(CombatPhaseController.Phase.PREPARATION)
+	phase_button.visible = true
 
-	if card.type == CardResource.CardType.UNIT:
-		if phase != Phase.PREPARATION:
-			hand_ui.cancel_play(card_ui)
-			return
-		_spawn_player_unit(card, drop_global_position)
-		hand_ui.confirm_play(card_ui)
-	else:
-		if phase != Phase.COMBAT:
-			hand_ui.cancel_play(card_ui)
-			return
-		_use_item_card(card, drop_global_position)
-		hand_ui.confirm_play(card_ui)
-
-func _is_valid_drop(world_position : Vector2) -> bool:
-	var viewport_size := get_viewport().get_visible_rect().size
-	if world_position.y < 0.0 or world_position.y > viewport_size.y - hand_area_height:
-		return false
-	if world_position.x < 0.0 or world_position.x > viewport_size.x:
-		return false
-	return true
-
-func _spawn_player_unit(card : CardResource, drop_position : Vector2) -> void:
-	if card.unit_scene == null:
+func _on_all_waves_cleared() -> void:
+	if _game_over:
 		return
-	var unit : PlayerUnitEntity = card.unit_scene.instantiate()
-	unit.max_health = card.unit_max_health
-	unit.move_speed = card.unit_move_speed
-	unit.sensor_radius = card.unit_sensor_radius
-	unit.sensor_fov_degrees = card.unit_sensor_fov_degrees
-	unit.attack_damage = card.unit_attack_damage
-	unit.attack_range = card.unit_attack_range
-	unit.attack_cooldown = card.unit_attack_cooldown
-	add_child(unit)
-	unit.position = drop_position
-	unit.setup(world)
-	placed_unit_ids.append(unit.entity_id)
-	placed_unit_cards[unit.entity_id] = card
+	_game_over = true
+	_reward.show_victory_reward(reward_card_pool)
 
-func _use_item_card(card : CardResource, target_position : Vector2) -> void:
-	for id in world.query([TransformComponent, FactionComponent, HealthComponent]):
-		var faction : FactionComponent = world.get_component(id, FactionComponent)
-		if faction.type != FactionComponent.FactionType.ENEMY:
-			continue
-		var xform : TransformComponent = world.get_component(id, TransformComponent)
-		if xform.position.distance_to(target_position) <= card.item_radius:
-			var health : HealthComponent = world.get_component(id, HealthComponent)
-			health.current = maxi(0, health.current - card.item_damage)
+## Entity lifecycle
 
-## Enemies
-func _on_spawn_timer_timeout() -> void:
-	_spawn_enemy()
-	enemies_spawned_this_wave += 1
-	if enemies_spawned_this_wave >= enemies_per_wave:
-		spawn_timer.stop()
-
-func _spawn_enemy() -> void:
-	var points := spawn_points.get_children()
-	if points.is_empty() or enemy_scene == null:
+func _on_player_died() -> void:
+	if _game_over:
 		return
-	var spawn_point : Node2D = points[randi() % points.size()]
-	var enemy : EnemyEntity = enemy_scene.instantiate()
-	add_child(enemy)
-	enemy.position = spawn_point.position
-	enemy.setup(world, player.position)
-	enemies_alive += 1
-	enemy.tree_exited.connect(_on_enemy_node_freed, CONNECT_ONE_SHOT)
+	_game_over = true
+	call_deferred("emit_signal", "level_lost")
 
-func _on_enemy_node_freed() -> void:
-	enemies_alive -= 1
-	if game_over:
-		return
-	if enemies_alive <= 0 and enemies_spawned_this_wave >= enemies_per_wave:
-		if current_wave >= total_waves:
-			_show_victory_reward()
-		else:
-			_set_phase(Phase.PREPARATION)
-			phase_button.visible = true
+func _on_scrap_awarded(amount : int) -> void:
+	_scrap.collect(amount)
 
-
-func _on_entity_died(entity_id : int) -> void:
-	if entity_id == player_id:
-		if not game_over:
-			game_over = true
-			call_deferred("emit_signal", "level_lost")
-		return
-	if world.has_component(entity_id, ScrapRewardComponent):
-		var reward : ScrapRewardComponent = world.get_component(entity_id, ScrapRewardComponent)
-		_collect_scrap(reward.amount)
-	if entity_id in placed_unit_ids:
-		placed_unit_ids.erase(entity_id)
-		var card : CardResource = placed_unit_cards.get(entity_id)
-		if card:
-			deck.return_card_to_draw(card)
-			placed_unit_cards.erase(entity_id)
-	if selected_unit_id == entity_id:
-		selected_unit_id = -1
-	var node := world.get_node(entity_id)
-	world.destroy_entity(entity_id)
-	if node and is_instance_valid(node):
-		node.queue_free()
-
-func _collect_scrap(amount : int) -> void:
-	scrap += amount
-	RunManager.add_scrap(amount)
+## ----- HUD -----
 
 func _update_health_bar() -> void:
 	var health := player.get_health()
 	if health:
-		health_label.text = "HP: %d/%d" % [health.current, health.max]
+		_hud.show_health(health.current, health.max)
 		if RunManager.has_active_run():
 			RunManager.sync_hp(health.current, health.max)
 
 func _update_deck_label() -> void:
-	if deck_label:
-		deck_label.text = "Deck: %d  Discard: %d" % [deck.draw_count(), deck.discard_count()]
+	_hud.show_deck(_deck.draw_count(), _deck.discard_count())
 
-## Point-and-click
-func _unhandled_input(event : InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and phase == Phase.PREPARATION:
-		_handle_battlefield_click(event.global_position)
+func _hud_show_scrap(amount : int) -> void:
+	_hud.show_scrap(amount)
 
-func _handle_battlefield_click(click_position : Vector2) -> void:
-	if not _is_valid_drop(click_position):
-		return
-	var clicked_unit_id := _find_unit_at(click_position)
-	if clicked_unit_id != -1:
-		selected_unit_id = clicked_unit_id
-		#print("Selected unit: ", selected_unit_id)
-		_update_selection_indicator()
-		return
-	if selected_unit_id != -1:
-		var node := world.get_node(selected_unit_id)
-		if node and node.has_method("move_to"):
-			#print("Moving unit ", selected_unit_id, " to ", click_position)
-			node.move_to(click_position)
-		else:
-			#print("Move failed - node missing or no move_to method: ", node)
-			pass
-		selected_unit_id = -1
-		_update_selection_indicator()
-
-func _find_unit_at(click_position : Vector2, max_distance : float = 48.0) -> int:
-	var closest_id := -1
-	var closest_distance := max_distance
-	for id in placed_unit_ids:
-		var xform : TransformComponent = world.get_component(id, TransformComponent)
-		if xform == null:
-			continue
-		var distance := xform.position.distance_to(click_position)
-		if distance < closest_distance:
-			closest_distance = distance
-			closest_id = id
-	return closest_id
-
-func _update_selection_indicator() -> void:
-	for id in placed_unit_ids:
-		var node := world.get_node(id)
-		if node and node.has_method("set_selected"):
-			node.set_selected(id == selected_unit_id)
+func _hud_show_wave(wave : int, total : int) -> void:
+	_hud.show_wave(wave, total)
 
 func _on_deck_label_pressed() -> void:
-	var cards := deck.get_all_cards()
+	var cards := _deck.get_all_cards()
 	cards.append_array(hand_ui.get_cards_in_hand())
 	deck_view_ui.show_cards(cards)
-	
-func _update_scrap_label() -> void:
-	scrap_label.text = "Scrap: %d" % scrap
-	
 
-## Reward
-func _show_victory_reward() -> void:
-	game_over = true
-	if not reward_phase.closed.is_connected(_on_reward_closed):
-		reward_phase.closed.connect(_on_reward_closed)
-	reward_phase.show_reward(reward_card_pool)
-
-func _on_reward_closed() -> void:
-	RunManager.set_deck(deck.get_all_cards())
-	level_won.emit(next_level_path)
-
+## Scene transitions
 
 func _on_combat_won(_next_level_path : String) -> void:
-	SceneLoader.load_scene("res://scenes/map/map_view.tscn")
+	CombatSceneTransitions.go_to_map()
 
 func _on_combat_lost() -> void:
-	RunManager.clear_run()
-	SceneLoader.load_scene("res://scenes/menus/main_menu/main_menu.tscn")
+	CombatSceneTransitions.go_to_main_menu()
