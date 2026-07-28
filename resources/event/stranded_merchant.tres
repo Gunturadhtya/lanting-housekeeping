@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="EventResource" format=3 uid="uid://bpnly1rxicx5c"]
+
+[ext_resource type="Script" uid="uid://cnwck6ygwr26p" path="res://resources/event/event_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://qg0338t6487u" path="res://resources/event/event_option_resource.gd" id="2"]
+[ext_resource type="Resource" uid="uid://srynk7uuyv22" path="res://resources/card/aoe_item.tres" id="3"]
+[ext_resource type="Resource" uid="uid://otuu81av65h4" path="res://resources/card/heal_item.tres" id="4"]
+[ext_resource type="Resource" uid="uid://hd2bs4d0tsoh" path="res://resources/card/slow_item.tres" id="5"]
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="6"]
+
+[sub_resource type="Resource" id="SubResource_trade"]
+script = ExtResource("2")
+option_text = "Trade for Salvaged Gear"
+scrap_cost = 20
+success_text = "The merchant hands over a crate of salvaged gear."
+success_card_reward_pool = Array[ExtResource("6")]([ExtResource("3"), ExtResource("4"), ExtResource("5")])
+
+[sub_resource type="Resource" id="SubResource_supplies"]
+script = ExtResource("2")
+option_text = "Buy Medical Supplies"
+scrap_cost = 15
+success_text = "Fresh bandages patch up the Lanting House crew."
+success_hp_delta = 15
+
+[sub_resource type="Resource" id="SubResource_walk"]
+script = ExtResource("2")
+option_text = "Walk Away"
+success_text = "You decide not to trust the stranded merchant and continue upriver."
+
+[resource]
+script = ExtResource("1")
+event_name = "Stranded Merchant"
+description = "A lone trader waves from a half-sunk kelotok, offering goods in exchange for scrap."
+options = Array[ExtResource("2")]([SubResource("SubResource_trade"), SubResource("SubResource_supplies"), SubResource("SubResource_walk")])

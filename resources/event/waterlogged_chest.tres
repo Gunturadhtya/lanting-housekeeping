@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EventResource" format=3 uid="uid://dm6obe1ts4rsw"]
+
+[ext_resource type="Script" uid="uid://cnwck6ygwr26p" path="res://resources/event/event_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://qg0338t6487u" path="res://resources/event/event_option_resource.gd" id="2"]
+[ext_resource type="Resource" uid="uid://otuu81av65h4" path="res://resources/card/heal_item.tres" id="3"]
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="4"]
+
+[sub_resource type="Resource" id="SubResource_open"]
+script = ExtResource("2")
+option_text = "Open the Chest"
+success_text = "Inside: a decent stash of scrap and a spare item card, still dry."
+success_scrap_delta = 25
+success_card_reward_pool = Array[ExtResource("4")]([ExtResource("3")])
+
+[resource]
+script = ExtResource("1")
+event_name = "Waterlogged Chest"
+description = "A small chest bobs against the hull, somehow still watertight."
+options = Array[ExtResource("2")]([SubResource("SubResource_open")])

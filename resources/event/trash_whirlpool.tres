@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EventResource" format=3 uid="uid://suxtpr6ro24"]
+
+[ext_resource type="Script" uid="uid://cnwck6ygwr26p" path="res://resources/event/event_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://qg0338t6487u" path="res://resources/event/event_option_resource.gd" id="2"]
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="2_wed6h"]
+
+[sub_resource type="Resource" id="SubResource_dive"]
+script = ExtResource("2")
+option_text = "Dive for Scrap"
+success_chance = 0.7
+success_text = "You surface with a haul of salvage from the wreck below."
+success_scrap_delta = 30
+failure_text = "Something in the debris bites back."
+failure_hp_delta = -10
+
+[sub_resource type="Resource" id="SubResource_leave"]
+script = ExtResource("2")
+option_text = "Leave it be"
+success_text = "You paddle onward, unharmed."
+
+[resource]
+script = ExtResource("1")
+event_name = "Trash Whirlpool"
+description = "A churning knot of debris hides something glinting beneath the surface — but the current looks unpredictable."
+options = Array[ExtResource("2")]([SubResource("SubResource_dive"), SubResource("SubResource_leave")])

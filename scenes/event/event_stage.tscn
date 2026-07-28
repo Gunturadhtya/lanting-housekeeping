@@ -1,0 +1,206 @@
+[gd_scene format=3 uid="uid://db1y7saqaraea"]
+
+[ext_resource type="Script" uid="uid://cnwck6ygwr26p" path="res://resources/event/event_resource.gd" id="1_4tqx8"]
+[ext_resource type="Resource" uid="uid://dcp4jctaygbxq" path="res://resources/event/old_shrine.tres" id="2_ew5re"]
+[ext_resource type="Resource" uid="uid://suxtpr6ro24" path="res://resources/event/trash_whirlpool.tres" id="3_0bpxh"]
+[ext_resource type="Resource" uid="uid://bpnly1rxicx5c" path="res://resources/event/stranded_merchant.tres" id="4_o7qkm"]
+
+[sub_resource type="GDScript" id="GDScript_tunje"]
+script/source = "extends Control
+
+@export var event_pool : Array[EventResource] = []
+
+@onready var title_label : Label = %TitleLabel
+@onready var description_label : Label = %DescriptionLabel
+@onready var art_rect : TextureRect = %ArtRect
+@onready var options_row : VBoxContainer = %OptionsRow
+@onready var result_label : Label = %ResultLabel
+@onready var continue_button : Button = %ContinueButton
+
+var _event : EventResource
+var _resolved : bool = false
+
+func _ready() -> void:
+	continue_button.pressed.connect(_on_continue_pressed)
+	continue_button.visible = false
+	result_label.text = \"\"
+	_event = _pick_event()
+	_display_event()
+
+## Setup
+
+func _pick_event() -> EventResource:
+	if event_pool.is_empty():
+		return null
+	var total : float = 0.0
+	for event in event_pool:
+		total += maxf(event.weight, 0.0)
+	if total <= 0.0:
+		return event_pool[randi() % event_pool.size()]
+
+	var roll : float = randf() * total
+	var accum : float = 0.0
+	for event in event_pool:
+		accum += maxf(event.weight, 0.0)
+		if roll <= accum:
+			return event
+	return event_pool.back()
+
+func _display_event() -> void:
+	if _event == null:
+		title_label.text = \"Nothing Here\"
+		description_label.text = \"The area is quiet. There's nothing left to find.\"
+		art_rect.visible = false
+		continue_button.visible = true
+		return
+
+	title_label.text = _event.event_name
+	description_label.text = _event.description
+	art_rect.visible = _event.texture != null
+	art_rect.texture = _event.texture
+
+	for child in options_row.get_children():
+		child.queue_free()
+	for i in range(_event.options.size()):
+		var option : EventOptionResource = _event.options[i]
+		var button := Button.new()
+		button.text = _option_label(option)
+		button.disabled = option.scrap_cost > RunManager.get_scrap()
+		button.pressed.connect(_on_option_pressed.bind(i))
+		options_row.add_child(button)
+
+func _option_label(option : EventOptionResource) -> String:
+	if option.scrap_cost > 0:
+		return \"%s (-%d Scrap)\" % [option.option_text, option.scrap_cost]
+	return option.option_text
+
+## Resolution
+
+func _on_option_pressed(index : int) -> void:
+	if _resolved or _event == null:
+		return
+	var option : EventOptionResource = _event.options[index]
+	if option.scrap_cost > 0 and not RunManager.spend_scrap(option.scrap_cost):
+		return
+	_resolved = true
+
+	if randf() <= option.success_chance:
+		_apply_outcome(option.success_scrap_delta, option.success_hp_delta, option.success_card_reward_pool, option.success_removes_random_card)
+		result_label.text = option.success_text
+	else:
+		_apply_outcome(option.failure_scrap_delta, option.failure_hp_delta, [], option.failure_removes_random_card)
+		result_label.text = option.failure_text
+
+	for child in options_row.get_children():
+		child.queue_free()
+	continue_button.visible = true
+
+func _apply_outcome(scrap_delta : int, hp_delta : int, card_pool : Array[CardResource], removes_random_card : bool) -> void:
+	if scrap_delta > 0:
+		RunManager.add_scrap(scrap_delta)
+	elif scrap_delta < 0:
+		RunManager.spend_scrap(mini(-scrap_delta, RunManager.get_scrap()))
+
+	if hp_delta > 0:
+		RunManager.heal(hp_delta)
+	elif hp_delta < 0:
+		RunManager.apply_damage(-hp_delta)
+
+	if not card_pool.is_empty():
+		var card : CardResource = card_pool[randi() % card_pool.size()]
+		RunManager.add_card(card)
+
+	if removes_random_card:
+		var deck := RunManager.get_deck()
+		if not deck.is_empty():
+			var card : CardResource = deck[randi() % deck.size()]
+			RunManager.remove_card(card)
+
+func _on_continue_pressed() -> void:
+	CombatSceneTransitions.go_to_map()
+"
+
+[node name="EventStage" type="Control" unique_id=1781233995]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = SubResource("GDScript_tunje")
+event_pool = Array[ExtResource("1_4tqx8")]([ExtResource("2_ew5re"), ExtResource("3_0bpxh"), ExtResource("4_o7qkm")])
+
+[node name="BackgroundColor" type="ColorRect" parent="." unique_id=271487938]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.07, 0.1, 0.09, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=872760083]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=59045256]
+custom_minimum_size = Vector2(600, 520)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=906808702]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=1644116287]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=600320387]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Event"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ArtRect" type="TextureRect" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=353562514]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1761002778]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OptionsRow" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1745034886]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="ResultLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=234162548]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ContinueButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1682368043]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Continue"

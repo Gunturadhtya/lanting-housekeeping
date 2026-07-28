@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="EventResource" format=3 uid="uid://dk47dtn6wgbfi"]
+
+[ext_resource type="Script" uid="uid://cnwck6ygwr26p" path="res://resources/event/event_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://qg0338t6487u" path="res://resources/event/event_option_resource.gd" id="2"]
+[ext_resource type="Resource" uid="uid://crggj1qjvbr52" path="res://resources/card/melee_unit.tres" id="3"]
+[ext_resource type="Resource" uid="uid://tau0tox305a7" path="res://resources/card/ranged_unit.tres" id="4"]
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="5"]
+
+[sub_resource type="Resource" id="SubResource_careful"]
+script = ExtResource("2")
+option_text = "Open it Carefully"
+success_text = "The crate creaks open, revealing a modest stash of scrap."
+success_scrap_delta = 40
+
+[sub_resource type="Resource" id="SubResource_force"]
+script = ExtResource("2")
+option_text = "Force it Open Fast"
+success_chance = 0.6
+success_text = "It splits open in one hit — a much bigger haul than expected, plus a spare unit card."
+success_scrap_delta = 70
+success_card_reward_pool = Array[ExtResource("5")]([ExtResource("3"), ExtResource("4")])
+failure_text = "A rigged spike catches your hand as the crate bursts open."
+failure_scrap_delta = 20
+failure_hp_delta = -15
+
+[resource]
+script = ExtResource("1")
+event_name = "Sealed Crate"
+description = "A waterlogged crate, sealed tight and clearly rigged by a previous scavenger."
+options = Array[ExtResource("2")]([SubResource("SubResource_careful"), SubResource("SubResource_force")])

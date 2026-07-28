@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EventResource" format=3 uid="uid://dcp4jctaygbxq"]
+
+[ext_resource type="Script" uid="uid://cnwck6ygwr26p" path="res://resources/event/event_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://qg0338t6487u" path="res://resources/event/event_option_resource.gd" id="2"]
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="2_qk4jx"]
+
+[sub_resource type="Resource" id="SubResource_pray"]
+script = ExtResource("2")
+option_text = "Pay Respects"
+success_text = "The old river spirits seem to bless your journey. The crew feels steadier."
+success_hp_delta = 10
+
+[resource]
+script = ExtResource("1")
+event_name = "Old Shrine"
+description = "A weathered shrine to the river spirits sits half-submerged, garlands of plastic flowers still tied to its posts."
+weight = 0.6
+options = Array[ExtResource("2")]([SubResource("SubResource_pray")])
