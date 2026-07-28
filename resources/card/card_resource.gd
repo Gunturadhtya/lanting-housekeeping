@@ -2,6 +2,7 @@ class_name CardResource
 extends Resource
 
 enum CardType { ITEM, UNIT }
+enum ItemEffectType { DAMAGE, HEAL, CROWD_CONTROL }
 
 @export var card_name : String = "Card"
 @export var type : CardType = CardType.UNIT
@@ -19,5 +20,9 @@ enum CardType { ITEM, UNIT }
 @export var unit_attack_cooldown : float = 1.0
 
 @export_group("Item")
+@export var item_effect_type : ItemEffectType = ItemEffectType.DAMAGE
 @export var item_damage : int = 20
 @export var item_radius : float = 120.0
+@export var item_heal_amount : int = 15
+@export var item_slow_multiplier : float = 0.5
+@export var item_slow_duration : float = 3.0
