@@ -193,9 +193,7 @@ func _hud_show_wave(wave : int, total : int) -> void:
 	_hud.show_wave(wave, total)
 
 func _on_deck_label_pressed() -> void:
-	var cards := _deck.get_all_cards()
-	cards.append_array(hand_ui.get_cards_in_hand())
-	deck_view_ui.show_cards(cards)
+	deck_view_ui.show_cards(_deck.get_all_cards())
 
 ## Scene transitions
 
