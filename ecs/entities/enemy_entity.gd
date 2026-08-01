@@ -10,6 +10,7 @@ extends ECSEntity
 @export var attack_cooldown : float = 1.0
 @export var scrap_reward : int = 10
 @export var show_debug_cone : bool = true
+@export var attack_origin_offset : float = 14.0
 
 const HEALTH_BAR_WIDTH := 32.0
 const HEALTH_BAR_HEIGHT := 5.0
@@ -21,7 +22,7 @@ func setup(ecs_world : ECSWorld, destination : Vector2) -> void:
 	world.add_component(entity_id, FactionComponent.new(FactionComponent.FactionType.ENEMY))
 	world.add_component(entity_id, MotionComponent.new(move_speed, Vector2.ZERO, destination))
 	world.add_component(entity_id, ConeSensorComponent.new(sensor_radius, sensor_fov_degrees))
-	world.add_component(entity_id, CombatComponent.new(attack_damage, attack_range, attack_cooldown))
+	world.add_component(entity_id, CombatComponent.new(attack_damage, attack_range, attack_cooldown, 0.0, attack_origin_offset))
 	world.add_component(entity_id, ScrapRewardComponent.new(scrap_reward))
 	queue_redraw()
 

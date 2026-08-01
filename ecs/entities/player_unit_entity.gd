@@ -9,6 +9,7 @@ extends ECSEntity
 @export var attack_range : float = 200.0
 @export var attack_cooldown : float = 1.0
 @export var show_debug_cone : bool = true
+@export var attack_origin_offset : float = 14.0
 
 var _selected : bool = false
 
@@ -22,7 +23,7 @@ func setup(ecs_world : ECSWorld) -> void:
 	world.add_component(entity_id, FactionComponent.new(FactionComponent.FactionType.PLAYER))
 	world.add_component(entity_id, MotionComponent.new(move_speed, Vector2.ZERO, position))
 	world.add_component(entity_id, ConeSensorComponent.new(sensor_radius, sensor_fov_degrees))
-	world.add_component(entity_id, CombatComponent.new(attack_damage, attack_range, attack_cooldown))
+	world.add_component(entity_id, CombatComponent.new(attack_damage, attack_range, attack_cooldown, 0.0, attack_origin_offset))
 	queue_redraw()
 
 func move_to(target_position : Vector2) -> void:

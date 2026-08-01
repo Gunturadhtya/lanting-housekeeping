@@ -12,7 +12,9 @@ func process(world : ECSWorld, delta : float) -> void:
 			continue
 		var self_xform : TransformComponent = world.get_component(id, TransformComponent)
 		var target_xform : TransformComponent = world.get_component(combat.target_id, TransformComponent)
-		if self_xform.position.distance_to(target_xform.position) > combat.attack_range:
+		var forward := Vector2.RIGHT.rotated(self_xform.rotation)
+		var attack_origin := self_xform.position + forward * combat.origin_offset
+		if attack_origin.distance_to(target_xform.position) > combat.attack_range:
 			continue
 		if combat.timer > 0.0:
 			continue
