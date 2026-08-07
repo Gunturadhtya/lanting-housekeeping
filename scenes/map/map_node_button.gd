@@ -13,8 +13,8 @@ var node_type : int = 0
 func setup(type : int) -> void:
 	node_type = type
 	if icon_label:
-		icon_label.text = MapGenerator.node_type_label(type).left(1)
-	tooltip_text = MapGenerator.node_type_label(type)
+		icon_label.text = MapGenerator.node_type_label(type)
+		tooltip_text = MapGenerator.node_type_label(type)
 
 func set_state(is_available : bool, is_visited : bool, is_current : bool) -> void:
 	disabled = not is_available

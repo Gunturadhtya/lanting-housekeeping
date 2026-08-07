@@ -81,6 +81,7 @@ func _spawn_button(node_id : String) -> void:
 
 	if btn.has_method("setup"):
 		btn.setup(info.get("type", MapGenerator.NodeType.COMBAT))
+		
 	else:
 		btn.text = MapGenerator.node_type_label(info.get("type", 0)).left(1)
 
