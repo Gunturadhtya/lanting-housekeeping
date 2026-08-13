@@ -170,6 +170,7 @@ func _apply_phase(phase : int) -> void:
 		hand_ui.set_playable_type(CardResource.CardType.UNIT)
 		_deck.set_active_type(CardResource.CardType.UNIT)
 	else:
+		_selection.cancel_drag()
 		if !debug:
 			phase_button.visible = false
 		_energy.begin_phase()

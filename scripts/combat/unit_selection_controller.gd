@@ -4,7 +4,7 @@ extends RefCounted
 signal selection_changed(unit_id : int)
 signal unit_retracted(unit_id : int)
 
-const DRAG_THRESHOLD_PX : float = 8.0
+const DRAG_THRESHOLD_PX : float = 24.0
 
 var selected_unit_id : int = -1
 
@@ -31,6 +31,9 @@ func handle_press(position : Vector2) -> void:
 	if selected_unit_id != -1:
 		_resolve_selection_action(position)
 		return
+	if not _phase_controller.is_preparation():
+		_abort_drag()
+		return
 	if not _drop_zone.is_within_battlefield(position):
 		return
 	var unit_id := _unit_placement.find_unit_at(position)
@@ -45,6 +48,9 @@ func handle_press(position : Vector2) -> void:
 func handle_motion(position: Vector2) -> void:
 	if _drag_unit_id == -1:
 		return
+	if not _phase_controller.is_preparation():
+		_abort_drag()
+		return
 	if not _drag_moved and position.distance_to(_drag_start_position) > DRAG_THRESHOLD_PX:
 		_drag_moved = true
 	if not _drag_moved:
@@ -56,11 +62,23 @@ func handle_motion(position: Vector2) -> void:
 func handle_release(position : Vector2) -> void:
 	if _drag_unit_id == -1:
 		return
+	if not _phase_controller.is_preparation():
+		_abort_drag()
+		return
 	var _unit_id := _drag_unit_id
 	_drag_unit_id = -1
 	if not _drag_moved:
 		return
 	_finalize_move_or_retract(_unit_id, position)
+	_select(-1)
+
+func cancel_drag() -> void:
+	if _drag_unit_id != -1 or selected_unit_id != -1:
+		_abort_drag()
+
+func _abort_drag() -> void:
+	_drag_unit_id = -1
+	_drag_moved = false
 	_select(-1)
 
 func clear_selection_if(entity_id : int) -> void:
