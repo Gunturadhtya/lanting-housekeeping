@@ -5,6 +5,7 @@ var _health_label : Label
 var _deck_label : Button
 var _wave_label : Label
 var _scrap_label : Label
+var _energy_label: Label
 var _phase_label : Label
 var _phase_button : Button
 
@@ -13,6 +14,7 @@ func _init(
 	deck_label : Button,
 	wave_label : Label,
 	scrap_label : Label,
+	energy_label: Label,
 	phase_label : Label,
 	phase_button : Button
 ) -> void:
@@ -20,6 +22,7 @@ func _init(
 	_deck_label = deck_label
 	_wave_label = wave_label
 	_scrap_label = scrap_label
+	_energy_label = energy_label
 	_phase_label = phase_label
 	_phase_button = phase_button
 
@@ -34,6 +37,10 @@ func show_wave(wave : int, total_waves : int) -> void:
 
 func show_scrap(amount : int) -> void:
 	_scrap_label.text = "Scrap: %d" % amount
+
+func show_energy(current: int, max_energy : int) -> void:
+	if _energy_label:
+		_energy_label.text = "Energy: %d/%d" % [current, max_energy]
 
 func show_phase(phase : int) -> void:
 	if phase == CombatPhaseController.Phase.PREPARATION:

@@ -30,6 +30,7 @@ signal level_changed(level_path : String)
 @onready var deck_view_ui : DeckViewUI = %DeckViewUI
 @onready var scrap_label : Label = %ScrapLabel
 @onready var drop_preview : CardDropPreview = %DropPreview
+@onready var energy_label : Label = %EnergyLabel
 
 var world := ECSWorld.new()
 var systems : Array[ECSSystem] = []
@@ -45,6 +46,7 @@ var _selection : UnitSelectionController
 var _card_play : CardPlayController
 var _lifecycle : EntityLifecycleHandler
 var _scrap : ScrapEconomy
+var _energy : EnergyEconomy
 var _hud : CombatHud
 var _reward : RewardCoordinator
 
@@ -103,19 +105,23 @@ func _build_controllers() -> void:
 
 	_scrap = ScrapEconomy.new()
 	_scrap.scrap_changed.connect(_hud_show_scrap)
+	
+	_energy = EnergyEconomy.new()
+	_energy.energy_changed.connect(_hud_show_energy)
 
 
-	_card_play = CardPlayController.new(_phase_controller, _unit_placement, world, hand_ui, drop_zone, _scrap)
+	_card_play = CardPlayController.new(_phase_controller, _unit_placement, world, hand_ui, drop_zone, _scrap, _energy)
 
 	_lifecycle = EntityLifecycleHandler.new(world, _player_id, _deck, _unit_placement, _selection)
 	_lifecycle.player_died.connect(_on_player_died)
 	_lifecycle.scrap_awarded.connect(_on_scrap_awarded)
 
-	_hud = CombatHud.new(health_label, deck_label, wave_label, scrap_label, phase_label, phase_button)
+	_hud = CombatHud.new(health_label, deck_label, wave_label, scrap_label, energy_label, phase_label, phase_button)
 
 	_reward = RewardCoordinator.new(reward_phase, _deck, next_level_path)
 	_reward.victory_confirmed.connect(func(path : String) -> void: level_won.emit(path))
 	_scrap.initialize()
+	_energy.initialize()
 
 func _get_starting_deck() -> Array[CardResource]:
 	var run_deck := RunManager.get_deck()
@@ -124,6 +130,7 @@ func _get_starting_deck() -> Array[CardResource]:
 func _physics_process(delta : float) -> void:
 	if _game_over:
 		return
+	_energy.process(delta)
 	for system in systems:
 		system.process(world, delta)
 	_update_health_bar()
@@ -140,12 +147,14 @@ func _on_phase_button_pressed() -> void:
 func _apply_phase(phase : int) -> void:
 	_hud.show_phase(phase)
 	if phase == CombatPhaseController.Phase.PREPARATION:
+		_energy.end_phase()
 		hand_ui.discard_cards_of_type(CardResource.CardType.ITEM)
 		hand_ui.set_playable_type(CardResource.CardType.UNIT)
 		_deck.set_active_type(CardResource.CardType.UNIT)
 	else:
 		if !debug:
 			phase_button.visible = false
+		_energy.begin_phase()
 		hand_ui.discard_cards_of_type(CardResource.CardType.UNIT)
 		hand_ui.set_playable_type(CardResource.CardType.ITEM)
 		_deck.set_active_type(CardResource.CardType.ITEM)
@@ -210,6 +219,9 @@ func _hud_show_scrap(amount : int) -> void:
 
 func _hud_show_wave(wave : int, total : int) -> void:
 	_hud.show_wave(wave, total)
+
+func _hud_show_energy(current: int, max_energy: int):
+	_hud.show_energy(current, max_energy)
 
 func _on_deck_label_pressed() -> void:
 	deck_view_ui.show_cards(_deck.get_all_cards())

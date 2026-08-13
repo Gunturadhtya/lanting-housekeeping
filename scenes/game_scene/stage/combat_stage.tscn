@@ -99,6 +99,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Scrap: 0"
 
+[node name="EnergyLabel" type="Label" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=1134466543]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Energy: 0"
+
 [node name="WaveLabel" type="Label" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=1148670224]
 unique_name_in_owner = true
 layout_mode = 2

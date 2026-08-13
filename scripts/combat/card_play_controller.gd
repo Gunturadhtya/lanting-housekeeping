@@ -9,6 +9,7 @@ var _world : ECSWorld
 var _hand_ui : HandUI
 var _drop_zone : DropZoneValidator
 var _scrap : ScrapEconomy
+var _energy : EnergyEconomy
 
 func _init(
 	phase_controller : CombatPhaseController,
@@ -16,7 +17,8 @@ func _init(
 	world : ECSWorld,
 	hand_ui : HandUI,
 	drop_zone : DropZoneValidator,
-	scrap : ScrapEconomy
+	scrap : ScrapEconomy,
+	energy : EnergyEconomy
 ) -> void:
 	_phase_controller = phase_controller
 	_unit_placement = unit_placement
@@ -24,18 +26,18 @@ func _init(
 	_hand_ui = hand_ui
 	_drop_zone = drop_zone
 	_scrap = scrap
+	_energy = energy
 
 func handle_play(card : CardResource, drop_global_position : Vector2, card_ui : CardUI) -> void:
 	if not _drop_zone.is_within_battlefield(drop_global_position):
 		_hand_ui.cancel_play(card_ui)
 		return
 
-	if not _scrap.can_afford(card.scrap_cost):
-		_hand_ui.cancel_play(card_ui)
-		return
-
 	if card.type == CardResource.CardType.UNIT:
 		if not _phase_controller.is_preparation():
+			_hand_ui.cancel_play(card_ui)
+			return
+		if not _scrap.can_afford(card.scrap_cost):
 			_hand_ui.cancel_play(card_ui)
 			return
 		var entity_id := _unit_placement.place_unit(card, drop_global_position)
@@ -49,6 +51,9 @@ func handle_play(card : CardResource, drop_global_position : Vector2, card_ui : 
 		if not _phase_controller.is_combat():
 			_hand_ui.cancel_play(card_ui)
 			return
-		_scrap.spend(card.scrap_cost)
+		if not _energy.can_afford(card.energy_cost):
+			_hand_ui.cancel_play(card_ui)
+			return
+		_energy.spend(card.energy_cost)
 		ItemCardEffect.apply(_world, card, drop_global_position)
 		_hand_ui.confirm_play(card_ui)

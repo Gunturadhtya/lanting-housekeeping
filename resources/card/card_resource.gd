@@ -9,6 +9,7 @@ enum ItemEffectType { DAMAGE, HEAL, CROWD_CONTROL }
 @export var texture : Texture2D
 @export var description : String = ""
 @export var scrap_cost : int = 0
+@export var energy_cost : int = 1
 @export var shop_price : int = 50
 @export var upgraded : bool = false
 
@@ -32,6 +33,7 @@ enum ItemEffectType { DAMAGE, HEAL, CROWD_CONTROL }
 
 const UPGRADE_STAT_MULTIPLIER : float = 1.25
 const UPGRADE_COST_REDUCTION : int = 5
+const UPGRADE_ENERGY_COST_REDUCTION : int = 1
 
 func create_upgraded() -> CardResource:
 	var upgraded_card : CardResource = duplicate(true)
@@ -41,6 +43,7 @@ func create_upgraded() -> CardResource:
 	if not upgraded_card.card_name.ends_with("+"):
 		upgraded_card.card_name += "+"
 	upgraded_card.scrap_cost = maxi(0, upgraded_card.scrap_cost - UPGRADE_COST_REDUCTION)
+	upgraded_card.energy_cost = maxi(1, upgraded_card.energy_cost - UPGRADE_ENERGY_COST_REDUCTION)
 
 	if upgraded_card.type == CardType.UNIT:
 		upgraded_card.unit_max_health = int(round(upgraded_card.unit_max_health * UPGRADE_STAT_MULTIPLIER))
