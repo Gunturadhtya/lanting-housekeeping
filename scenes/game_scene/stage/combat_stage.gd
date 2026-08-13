@@ -119,6 +119,7 @@ func _build_controllers() -> void:
 	_lifecycle = EntityLifecycleHandler.new(world, _player_id, _deck, _unit_placement, _selection, _slots)
 	_lifecycle.player_died.connect(_on_player_died)
 	_lifecycle.scrap_awarded.connect(_on_scrap_awarded)
+	_selection.unit_retracted.connect(_lifecycle.retract_unit)
 
 	_hud = CombatHud.new(health_label, deck_label, wave_label, scrap_label, energy_label, slot_label, phase_label, phase_button)
 
@@ -141,9 +142,20 @@ func _physics_process(delta : float) -> void:
 	_update_health_bar()
 
 func _unhandled_input(event : InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_selection.handle_click(event.global_position)
-
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			_selection.handle_press(event.global_position)
+		else:
+			_selection.handle_release(event.global_position)
+	elif event is InputEventMouseMotion:
+		_selection.handle_motion(event.global_position)
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			_selection.handle_press(event.position)
+		else:
+			_selection.handle_release(event.position)
+	elif event is InputEventScreenDrag:
+		_selection.handle_motion(event.position)
 ## Phase
 
 func _on_phase_button_pressed() -> void:

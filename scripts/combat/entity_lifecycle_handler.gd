@@ -43,6 +43,13 @@ func _on_entity_died(entity_id : int) -> void:
 	_selection.clear_selection_if(entity_id)
 	_destroy(entity_id)
 
+func retract_unit(entity_id: int) -> void:
+	var card := _unit_placement.release_unit(entity_id)
+	if card:
+		_slots.release(card.unit_slot_cost)
+	_selection.clear_selection_if(entity_id)
+	_destroy(entity_id)
+
 func _destroy(entity_id : int) -> void:
 	var node := _world.get_node(entity_id)
 	_world.destroy_entity(entity_id)
