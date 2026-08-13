@@ -43,7 +43,7 @@ func setup(new_card : CardResource) -> void:
 		art_rect.texture = card.texture
 	if stat_label:
 		if card.type == CardResource.CardType.UNIT:
-			var cost_suffix := " Scrap %d" % card.scrap_cost
+			var cost_suffix := "  Slot %d  Scrap %d" % [card.unit_slot_cost, card.scrap_cost]
 			stat_label.text = "HP %d  DMG %d%s" % [card.unit_max_health, card.unit_attack_damage, cost_suffix]
 		else:
 			var cost_suffix := " Energy %d" % card.energy_cost

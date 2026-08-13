@@ -5,6 +5,7 @@ enum CardType { ITEM, UNIT }
 enum ItemEffectType { DAMAGE, HEAL, CROWD_CONTROL }
 
 @export var card_name : String = "Card"
+@export var card_id : String = ""
 @export var type : CardType = CardType.UNIT
 @export var texture : Texture2D
 @export var description : String = ""
@@ -16,6 +17,7 @@ enum ItemEffectType { DAMAGE, HEAL, CROWD_CONTROL }
 @export_group("Unit")
 @export var unit_scene : PackedScene
 @export var unit_max_health : int = 30
+@export var unit_slot_cost : int = 1
 @export var unit_move_speed : float = 90.0
 @export var unit_sensor_radius : float = 220.0
 @export var unit_sensor_fov_degrees : float = 80.0
@@ -60,3 +62,6 @@ func create_upgraded() -> CardResource:
 				upgraded_card.item_radius *= UPGRADE_STAT_MULTIPLIER
 
 	return upgraded_card
+
+func is_unique() -> bool:
+	return type == CardType.UNIT

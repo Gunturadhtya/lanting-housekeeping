@@ -31,6 +31,7 @@ signal level_changed(level_path : String)
 @onready var scrap_label : Label = %ScrapLabel
 @onready var drop_preview : CardDropPreview = %DropPreview
 @onready var energy_label : Label = %EnergyLabel
+@onready var slot_label : Label = %SlotLabel
 
 var world := ECSWorld.new()
 var systems : Array[ECSSystem] = []
@@ -47,6 +48,7 @@ var _card_play : CardPlayController
 var _lifecycle : EntityLifecycleHandler
 var _scrap : ScrapEconomy
 var _energy : EnergyEconomy
+var _slots : SlotEconomy
 var _hud : CombatHud
 var _reward : RewardCoordinator
 
@@ -109,19 +111,22 @@ func _build_controllers() -> void:
 	_energy = EnergyEconomy.new()
 	_energy.energy_changed.connect(_hud_show_energy)
 
+	_slots = SlotEconomy.new()
+	_slots.slots_changed.connect(_hud_show_slots)
 
-	_card_play = CardPlayController.new(_phase_controller, _unit_placement, world, hand_ui, drop_zone, _scrap, _energy)
+	_card_play = CardPlayController.new(_phase_controller, _unit_placement, world, hand_ui, drop_zone, _scrap, _energy, _slots)
 
-	_lifecycle = EntityLifecycleHandler.new(world, _player_id, _deck, _unit_placement, _selection)
+	_lifecycle = EntityLifecycleHandler.new(world, _player_id, _deck, _unit_placement, _selection, _slots)
 	_lifecycle.player_died.connect(_on_player_died)
 	_lifecycle.scrap_awarded.connect(_on_scrap_awarded)
 
-	_hud = CombatHud.new(health_label, deck_label, wave_label, scrap_label, energy_label, phase_label, phase_button)
+	_hud = CombatHud.new(health_label, deck_label, wave_label, scrap_label, energy_label, slot_label, phase_label, phase_button)
 
 	_reward = RewardCoordinator.new(reward_phase, _deck, next_level_path)
 	_reward.victory_confirmed.connect(func(path : String) -> void: level_won.emit(path))
 	_scrap.initialize()
 	_energy.initialize()
+	_slots.initialize()
 
 func _get_starting_deck() -> Array[CardResource]:
 	var run_deck := RunManager.get_deck()
@@ -149,6 +154,7 @@ func _apply_phase(phase : int) -> void:
 	if phase == CombatPhaseController.Phase.PREPARATION:
 		_energy.end_phase()
 		hand_ui.discard_cards_of_type(CardResource.CardType.ITEM)
+		hand_ui.show_unit_cards()
 		hand_ui.set_playable_type(CardResource.CardType.UNIT)
 		_deck.set_active_type(CardResource.CardType.UNIT)
 	else:
@@ -202,7 +208,7 @@ func _on_player_died() -> void:
 func _on_scrap_awarded(amount : int) -> void:
 	_scrap.collect(amount)
 
-## ----- HUD -----
+## HUD
 
 func _update_health_bar() -> void:
 	var health := player.get_health()
@@ -222,6 +228,9 @@ func _hud_show_wave(wave : int, total : int) -> void:
 
 func _hud_show_energy(current: int, max_energy: int):
 	_hud.show_energy(current, max_energy)
+
+func _hud_show_slots(used: int, max_slot: int):
+	_hud.show_slots(used, max_slot)
 
 func _on_deck_label_pressed() -> void:
 	deck_view_ui.show_cards(_deck.get_all_cards())

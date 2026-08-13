@@ -99,8 +99,10 @@ func _apply_outcome(scrap_delta : int, hp_delta : int, card_pool : Array[CardRes
 		RunManager.apply_damage(-hp_delta)
 
 	if not card_pool.is_empty():
-		var card : CardResource = card_pool[randi() % card_pool.size()]
-		RunManager.add_card(card)
+		var available := RunManager.filter_ownable_cards(card_pool)
+		if not available.is_empty():
+			var card : CardResource = available[randi() % available.size()]
+			RunManager.add_card(card)
 
 	if removes_random_card:
 		var deck := RunManager.get_deck()

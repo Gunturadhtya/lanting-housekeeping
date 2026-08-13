@@ -6,8 +6,10 @@
 [resource]
 script = ExtResource("1_84fag")
 card_name = "Ranged"
+card_id = "ranged_unit"
 unit_scene = ExtResource("2_3pvtj")
 unit_max_health = 25
+unit_slot_cost = 2
 unit_move_speed = 100.0
 unit_sensor_radius = 300.0
 unit_sensor_fov_degrees = 70.0

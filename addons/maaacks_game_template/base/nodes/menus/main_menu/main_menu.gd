@@ -10,6 +10,7 @@ signal game_exited
 ## Defines the path to the game scene. Hides the play button if empty.
 ## Will attempt to read from AppConfig if left empty.
 @export_file("*.tscn") var game_scene_path : String
+@export var run_config : RunConfig
 ## The scene to open when a player clicks the 'Options' button.
 @export var options_packed_scene : PackedScene
 ## The scene to open when a player clicks the 'Credits' button.
@@ -21,17 +22,8 @@ signal game_exited
 ## If true, signals that the player clicked the 'Exit' button, instead of immediately exiting.
 @export var signal_game_exit : bool = false
 
+
 var sub_menu : Control
-var base_starting_deck : Array[CardResource] = [
-	preload("res://resources/card/melee_unit.tres"),
-	preload("res://resources/card/melee_unit.tres"),
-	preload("res://resources/card/ranged_unit.tres"),
-	preload("res://resources/card/ranged_unit.tres"),
-	preload("res://resources/card/aoe_item.tres"),
-	preload("res://resources/card/aoe_item.tres"),
-	preload("res://resources/card/heal_item.tres"),
-	preload("res://resources/card/slow_item.tres"),
-]
 
 @onready var menu_container = %MenuContainer
 @onready var menu_buttons_box_container = %MenuButtonsBoxContainer
@@ -116,10 +108,6 @@ func _hide_credits_if_unset() -> void:
 		credits_button.hide()
 
 func _ready() -> void:
-	var seed_value := randi()
-	RunManager.start_new_run(base_starting_deck, 100, seed_value)
-	var map_data := MapGenerator.generate(seed_value)
-	RunManager.set_map_data(map_data)
 	_hide_exit_for_web()
 	_hide_options_if_unset()
 	_hide_credits_if_unset()
@@ -139,3 +127,15 @@ func _on_exit_button_pressed() -> void:
 
 func _on_exit_confirmation_confirmed():
 	exit_game()
+
+func _ensure_run_ready() -> void:
+	if RunManager.has_active_run():
+		return
+
+func _start_fresh_run() -> void:
+	var seed_value = randi()
+	var starting_deck = run_config.starting_deck if run_config else []
+	var starting_hp = run_config.starting_hp if run_config else 100
+	RunManager.start_new_run(starting_deck, starting_hp, seed_value)
+	var map_data = MapGenerator.generate(seed_value)
+	RunManager.set_map_data(map_data)

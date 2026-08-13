@@ -6,6 +6,7 @@ var _deck_label : Button
 var _wave_label : Label
 var _scrap_label : Label
 var _energy_label: Label
+var _slot_label : Label
 var _phase_label : Label
 var _phase_button : Button
 
@@ -14,7 +15,8 @@ func _init(
 	deck_label : Button,
 	wave_label : Label,
 	scrap_label : Label,
-	energy_label: Label,
+	energy_label : Label,
+	slot_label : Label,
 	phase_label : Label,
 	phase_button : Button
 ) -> void:
@@ -23,6 +25,7 @@ func _init(
 	_wave_label = wave_label
 	_scrap_label = scrap_label
 	_energy_label = energy_label
+	_slot_label = slot_label
 	_phase_label = phase_label
 	_phase_button = phase_button
 
@@ -49,3 +52,6 @@ func show_phase(phase : int) -> void:
 	else:
 		_phase_label.text = "Combat Phase"
 		_phase_button.text = "Back to Prep"
+
+func show_slots(used: int, max_slot: int):
+	_slot_label.text = "Slot: %d/%d" % [used, max_slot]

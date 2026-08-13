@@ -104,6 +104,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Energy: 0"
 
+[node name="SlotLabel" type="Label" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=720124512]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Slots : 0/0"
+
 [node name="WaveLabel" type="Label" parent="HUD/SafeAreaMarginContainer/MarginContainer/VBoxContainer" unique_id=1148670224]
 unique_name_in_owner = true
 layout_mode = 2
