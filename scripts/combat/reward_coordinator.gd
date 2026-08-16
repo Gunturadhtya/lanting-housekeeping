@@ -17,7 +17,7 @@ func show_victory_reward(reward_card_pool : Array[CardResource]) -> void:
 		_reward_phase.closed.connect(_on_reward_closed)
 	if not _reward_phase.card_chosen.is_connected(_on_card_chosen):
 		_reward_phase.card_chosen.connect(_on_card_chosen)
-	_reward_phase.show_reward(reward_card_pool)
+	_reward_phase.show_reward(RunManager.filter_ownable_cards(reward_card_pool))
 
 func _on_card_chosen(card : CardResource) -> void:
 	_deck.add_card(card)

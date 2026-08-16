@@ -12,6 +12,7 @@ extends ECSEntity
 @export var attack_origin_offset : float = 14.0
 
 var _selected : bool = false
+var _drag_invalid : bool = false
 
 const HEALTH_BAR_WIDTH := 40.0
 const HEALTH_BAR_HEIGHT := 6.0
@@ -33,8 +34,24 @@ func move_to(target_position : Vector2) -> void:
 	if motion:
 		motion.destination = target_position
 
+func set_drag_position(new_position : Vector2, valid_drop : bool) -> void:
+	if entity_id == -1:
+		return
+	_drag_invalid = not valid_drop
+	var xform : TransformComponent = world.get_component(entity_id, TransformComponent)
+	if xform:
+		xform.position = new_position
+	var motion : MotionComponent = world.get_component(entity_id, MotionComponent)
+	if motion:
+		motion.velocity = Vector2.ZERO
+		motion.destination = new_position
+	position = new_position
+	queue_redraw()
+
 func set_selected(value : bool) -> void:
 	_selected = value
+	if not value:
+		_drag_invalid = false
 	queue_redraw()
 
 func _process(_delta : float) -> void:
@@ -45,7 +62,8 @@ func _draw() -> void:
 		return
 	
 	if _selected:
-		draw_circle(Vector2.ZERO, 20.0, Color(1, 1, 0, 0.35))
+		var indicator_color := Color(1, 0.25, 0.25, 0.35) if _drag_invalid else Color(1, 1, 0, 0.35)
+		draw_circle(Vector2.ZERO, 20.0, indicator_color)
 
 	if show_debug_cone:
 		var sensor : ConeSensorComponent = world.get_component(entity_id, ConeSensorComponent)

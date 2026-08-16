@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_7ji8k")
 card_name = "Heal"
+card_id = "heal_item"
 type = 0
 description = "Heal Allies (Unit Only)"
 scrap_cost = 15

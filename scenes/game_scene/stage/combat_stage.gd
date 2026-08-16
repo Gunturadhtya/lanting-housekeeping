@@ -30,6 +30,8 @@ signal level_changed(level_path : String)
 @onready var deck_view_ui : DeckViewUI = %DeckViewUI
 @onready var scrap_label : Label = %ScrapLabel
 @onready var drop_preview : CardDropPreview = %DropPreview
+@onready var energy_label : Label = %EnergyLabel
+@onready var slot_label : Label = %SlotLabel
 
 var world := ECSWorld.new()
 var systems : Array[ECSSystem] = []
@@ -45,6 +47,8 @@ var _selection : UnitSelectionController
 var _card_play : CardPlayController
 var _lifecycle : EntityLifecycleHandler
 var _scrap : ScrapEconomy
+var _energy : EnergyEconomy
+var _slots : SlotEconomy
 var _hud : CombatHud
 var _reward : RewardCoordinator
 
@@ -103,19 +107,27 @@ func _build_controllers() -> void:
 
 	_scrap = ScrapEconomy.new()
 	_scrap.scrap_changed.connect(_hud_show_scrap)
+	
+	_energy = EnergyEconomy.new()
+	_energy.energy_changed.connect(_hud_show_energy)
 
+	_slots = SlotEconomy.new()
+	_slots.slots_changed.connect(_hud_show_slots)
 
-	_card_play = CardPlayController.new(_phase_controller, _unit_placement, world, hand_ui, drop_zone, _scrap)
+	_card_play = CardPlayController.new(_phase_controller, _unit_placement, world, hand_ui, drop_zone, _scrap, _energy, _slots)
 
-	_lifecycle = EntityLifecycleHandler.new(world, _player_id, _deck, _unit_placement, _selection)
+	_lifecycle = EntityLifecycleHandler.new(world, _player_id, _deck, _unit_placement, _selection, _slots)
 	_lifecycle.player_died.connect(_on_player_died)
 	_lifecycle.scrap_awarded.connect(_on_scrap_awarded)
+	_selection.unit_retracted.connect(_lifecycle.retract_unit)
 
-	_hud = CombatHud.new(health_label, deck_label, wave_label, scrap_label, phase_label, phase_button)
+	_hud = CombatHud.new(health_label, deck_label, wave_label, scrap_label, energy_label, slot_label, phase_label, phase_button)
 
 	_reward = RewardCoordinator.new(reward_phase, _deck, next_level_path)
 	_reward.victory_confirmed.connect(func(path : String) -> void: level_won.emit(path))
 	_scrap.initialize()
+	_energy.initialize()
+	_slots.initialize()
 
 func _get_starting_deck() -> Array[CardResource]:
 	var run_deck := RunManager.get_deck()
@@ -124,14 +136,26 @@ func _get_starting_deck() -> Array[CardResource]:
 func _physics_process(delta : float) -> void:
 	if _game_over:
 		return
+	_energy.process(delta)
 	for system in systems:
 		system.process(world, delta)
 	_update_health_bar()
 
 func _unhandled_input(event : InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_selection.handle_click(event.global_position)
-
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			_selection.handle_press(event.global_position)
+		else:
+			_selection.handle_release(event.global_position)
+	elif event is InputEventMouseMotion:
+		_selection.handle_motion(event.global_position)
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			_selection.handle_press(event.position)
+		else:
+			_selection.handle_release(event.position)
+	elif event is InputEventScreenDrag:
+		_selection.handle_motion(event.position)
 ## Phase
 
 func _on_phase_button_pressed() -> void:
@@ -140,12 +164,16 @@ func _on_phase_button_pressed() -> void:
 func _apply_phase(phase : int) -> void:
 	_hud.show_phase(phase)
 	if phase == CombatPhaseController.Phase.PREPARATION:
+		_energy.end_phase()
 		hand_ui.discard_cards_of_type(CardResource.CardType.ITEM)
+		hand_ui.show_unit_cards()
 		hand_ui.set_playable_type(CardResource.CardType.UNIT)
 		_deck.set_active_type(CardResource.CardType.UNIT)
 	else:
+		_selection.cancel_drag()
 		if !debug:
 			phase_button.visible = false
+		_energy.begin_phase()
 		hand_ui.discard_cards_of_type(CardResource.CardType.UNIT)
 		hand_ui.set_playable_type(CardResource.CardType.ITEM)
 		_deck.set_active_type(CardResource.CardType.ITEM)
@@ -193,7 +221,7 @@ func _on_player_died() -> void:
 func _on_scrap_awarded(amount : int) -> void:
 	_scrap.collect(amount)
 
-## ----- HUD -----
+## HUD
 
 func _update_health_bar() -> void:
 	var health := player.get_health()
@@ -210,6 +238,12 @@ func _hud_show_scrap(amount : int) -> void:
 
 func _hud_show_wave(wave : int, total : int) -> void:
 	_hud.show_wave(wave, total)
+
+func _hud_show_energy(current: int, max_energy: int):
+	_hud.show_energy(current, max_energy)
+
+func _hud_show_slots(used: int, max_slot: int):
+	_hud.show_slots(used, max_slot)
 
 func _on_deck_label_pressed() -> void:
 	deck_view_ui.show_cards(_deck.get_all_cards())

@@ -22,6 +22,7 @@ func new_game() -> void:
 	if confirm_new_game and continue_game_button.visible:
 		new_game_confirmation.show()
 	else:
+		_start_fresh_run()
 		GameState.reset()
 		load_game_scene()
 
@@ -62,6 +63,7 @@ func _show_continue_if_set() -> void:
 
 func _ready() -> void:
 	super._ready()
+	_ensure_run_ready()
 	_show_level_select_if_set()
 	_show_continue_if_set()
 	animation_state_machine = $MenuAnimationTree.get("parameters/playback")
@@ -76,5 +78,6 @@ func _on_level_select_button_pressed() -> void:
 		level_select_scene.connect("level_selected", load_game_scene)
 
 func _on_new_game_confirmation_confirmed() -> void:
+	_start_fresh_run()
 	GameState.reset()
 	load_game_scene()

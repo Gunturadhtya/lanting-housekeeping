@@ -11,7 +11,7 @@ static func start_new_run(
 	state.max_hp = starting_hp
 	state.current_hp = starting_hp
 	state.scrap = 0
-	state.deck = starting_deck.duplicate()
+	state.deck = RunDeckOps.dedupe_unit_cards(starting_deck)
 	state.map_data = {}
 	state.current_node_id = ""
 	state.visited_node_ids = []

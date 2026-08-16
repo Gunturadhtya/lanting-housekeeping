@@ -85,9 +85,24 @@ static func set_deck(cards : Array[CardResource]) -> void:
 	RunDeckOps.set_deck(_state(), cards)
 	GlobalState.save()
 
-static func add_card(card : CardResource) -> void:
-	RunDeckOps.add_card(_state(), card)
-	GlobalState.save()
+static func add_card(card : CardResource) -> bool:
+	var result := RunDeckOps.add_card(_state(), card)
+	if result:
+		GlobalState.save()
+	return result
+
+static func can_add_card(card : CardResource) -> bool:
+	return RunDeckOps.can_add_card(_state(), card)
+
+static func owns_unit_card(card_id : String) -> bool:
+	return RunDeckOps.owns_unit_card(_state(), card_id)
+
+static func filter_ownable_cards(pool : Array[CardResource]) -> Array[CardResource]:
+	var result : Array[CardResource] = []
+	for card in pool:
+		if can_add_card(card):
+			result.append(card)
+	return result
 
 ## Shop
 

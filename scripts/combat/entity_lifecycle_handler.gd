@@ -9,19 +9,22 @@ var _player_id : int
 var _deck : Deck
 var _unit_placement : UnitPlacementService
 var _selection : UnitSelectionController
+var _slots : SlotEconomy
 
 func _init(
 	world : ECSWorld,
 	player_id : int,
 	deck : Deck,
 	unit_placement : UnitPlacementService,
-	selection : UnitSelectionController
+	selection : UnitSelectionController,
+	slots : SlotEconomy
 ) -> void:
 	_world = world
 	_player_id = player_id
 	_deck = deck
 	_unit_placement = unit_placement
 	_selection = selection
+	_slots = slots
 	world.entity_died.connect(_on_entity_died)
 
 func _on_entity_died(entity_id : int) -> void:
@@ -35,8 +38,15 @@ func _on_entity_died(entity_id : int) -> void:
 
 	var returned_card := _unit_placement.release_unit(entity_id)
 	if returned_card:
-		_deck.return_card_to_draw(returned_card)
+		_slots.lose(returned_card.unit_slot_cost)
 
+	_selection.clear_selection_if(entity_id)
+	_destroy(entity_id)
+
+func retract_unit(entity_id: int) -> void:
+	var card := _unit_placement.release_unit(entity_id)
+	if card:
+		_slots.release(card.unit_slot_cost)
 	_selection.clear_selection_if(entity_id)
 	_destroy(entity_id)
 

@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_gyaon")
 card_name = "Slow"
+card_id = "slow_item"
 type = 0
 description = "Slow Enemies on Area for certain duration"
 scrap_cost = 15

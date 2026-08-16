@@ -7,6 +7,7 @@ var _draw_piles : Dictionary = {
 	CardResource.CardType.UNIT: [],
 	CardResource.CardType.ITEM: [],
 }
+
 var _discard_piles : Dictionary = {
 	CardResource.CardType.UNIT: [],
 	CardResource.CardType.ITEM: [],
@@ -78,6 +79,9 @@ func get_all_cards() -> Array[CardResource]:
 	if _hand_provider.is_valid():
 		result.append_array(_hand_provider.call())
 	return result
+
+func get_unit_pool() -> Array:
+	return _draw_piles[CardResource.CardType.UNIT].duplicate()
 
 func add_card(card : CardResource) -> void:
 	if card == null:

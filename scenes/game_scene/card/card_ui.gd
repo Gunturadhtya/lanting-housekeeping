@@ -42,10 +42,11 @@ func setup(new_card : CardResource) -> void:
 	if art_rect and card.texture:
 		art_rect.texture = card.texture
 	if stat_label:
-		var cost_suffix := "  Cost %d" % card.scrap_cost
 		if card.type == CardResource.CardType.UNIT:
+			var cost_suffix := "  Slot %d  Scrap %d" % [card.unit_slot_cost, card.scrap_cost]
 			stat_label.text = "HP %d  DMG %d%s" % [card.unit_max_health, card.unit_attack_damage, cost_suffix]
 		else:
+			var cost_suffix := " Energy %d" % card.energy_cost
 			match card.item_effect_type:
 				CardResource.ItemEffectType.HEAL:
 					stat_label.text = "HEAL %d%s" % [card.item_heal_amount, cost_suffix]

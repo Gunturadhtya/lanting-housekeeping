@@ -35,7 +35,7 @@ func _generate_offers() -> void:
 	_buy_buttons.clear()
 	_card_uis.clear()
 
-	var pool : Array[CardResource] = shop_card_pool.duplicate()
+	var pool : Array[CardResource] = RunManager.filter_ownable_cards(shop_card_pool)
 	pool.shuffle()
 	_offers = pool.slice(0, mini(OFFER_COUNT, pool.size()))
 
@@ -74,6 +74,8 @@ func _on_buy_pressed(index : int) -> void:
 	if button.disabled:
 		return
 	var card : CardResource = _offers[index]
+	if not RunManager.can_add_card(card):
+		return
 	if not RunManager.spend_scrap(card.shop_price):
 		return
 
@@ -94,7 +96,7 @@ func _refresh_offer_affordability() -> void:
 		if button.text == "Sold":
 			continue
 		var card : CardResource = _offers[index]
-		button.disabled = scrap < card.shop_price
+		button.disabled = scrap < card.shop_price or not RunManager.can_add_card(card)
 
 ## Removing
 

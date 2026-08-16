@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_plnp8")
 card_name = "AoE Damage"
+card_id = "aoe_item"
 type = 0
 scrap_cost = 15
 item_damage = 25
