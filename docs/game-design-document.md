@@ -66,9 +66,9 @@ Player menyusuri peta (graph bercabang) aliran sungai, dari hilir (node terbawah
 
 #### Item Cards
 
-- **Heal/Repair:** Restores health to active units or the base.
+- **Palu:** Menge-heal 20% HP jukung.
 - **Direct Damage:** Environmental or explosive strikes on trash monsters.
-- **Crowd Control:** Slows down incoming monster progression.
+- **Jaring:** Memperlambat pergerakan musuh.
 
 ### Player Stats
 
@@ -79,7 +79,7 @@ Player menyusuri peta (graph bercabang) aliran sungai, dari hilir (node terbawah
 - **Slot Kartu:** Seberapa banyak kartu barang yang dapat dimiliki player. Jumlah kartu jukung tidak dibatasi. Player hanya dapat memiliki 8 kartu barang, dan ketika memperoleh kartu barang baru, player diharuskan mengganti kartu yang sudah ada.
 - **Rongsokan (Scrap)**: Mata uang di dalam game. Diperoleh sebagai reward memenangkan Pertarungan atau dari Peristiwa tertentu. Player memulai game dengan 100 rongsokan. Player dapat menghabiskan rongsokan di Pasar Terapung untuk membeli kartu atau upgrade stat.
 
-### Enemies
+### List of Enemies
 
 ### Progression
 
