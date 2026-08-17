@@ -4,7 +4,7 @@ extends RefCounted
 signal selection_changed(unit_id : int)
 signal unit_retracted(unit_id : int)
 
-const DRAG_THRESHOLD_PX : float = 24.0
+const DRAG_THRESHOLD_PX : float = 3.0
 
 var selected_unit_id : int = -1
 

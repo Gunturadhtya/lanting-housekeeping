@@ -2,6 +2,7 @@ class_name CardDropPreview
 extends Control
 
 var world : ECSWorld
+var world_to_screen : Callable
 
 const LOCK_ON_SEARCH_RADIUS : float = 220.0
 
@@ -54,7 +55,8 @@ func _find_lock_on_ally(pos : Vector2) -> int:
 		if faction.type != FactionComponent.FactionType.PLAYER:
 			continue
 		var xform : TransformComponent = world.get_component(id, TransformComponent)
-		var distance := xform.position.distance_to(pos)
+		var screen_pos : Vector2 = world_to_screen.call(xform.position)
+		var distance := screen_pos.distance_to(pos)
 		if distance < closest_distance:
 			closest_distance = distance
 			closest_id = id
@@ -82,7 +84,7 @@ func _draw_lock_on() -> void:
 	if found_unit:
 		var xform : TransformComponent = world.get_component(_locked_unit_id, TransformComponent)
 		if xform:
-			center = xform.position
+			center = world_to_screen.call(xform.position)
 		else:
 			found_unit = false
 	var lock_radius := 34.0 if found_unit else 12.0

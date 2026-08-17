@@ -46,9 +46,41 @@ unique_name_in_owner = true
 script = ExtResource("7_0blov")
 tutorial_scenes = Array[PackedScene]([ExtResource("8_b4aor")])
 
-[node name="Player" parent="." unique_id=1601606335 instance=ExtResource("9_pojro")]
+[node name="WorldViewportContainer" type="SubViewportContainer" parent="." unique_id=500000001]
 unique_name_in_owner = true
-position = Vector2(359, 1409)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stretch = true
+
+[node name="WorldViewport" type="SubViewport" parent="WorldViewportContainer" unique_id=500000002]
+unique_name_in_owner = true
+handle_input_locally = false
+size = Vector2i(720, 1600)
+size_2d_override = Vector2i(90, 200)
+size_2d_override_stretch = true
+
+[node name="World" type="Node2D" parent="WorldViewportContainer/WorldViewport" unique_id=500000003]
+unique_name_in_owner = true
+
+[node name="Player" parent="WorldViewportContainer/WorldViewport/World" unique_id=1601606335 instance=ExtResource("9_pojro")]
+unique_name_in_owner = true
+
+[node name="SpawnPoints" type="Node2D" parent="WorldViewportContainer/WorldViewport/World" unique_id=732777320]
+unique_name_in_owner = true
+
+[node name="SpawnPoint1" type="Marker2D" parent="WorldViewportContainer/WorldViewport/World/SpawnPoints" unique_id=891739274]
+position = Vector2(14.375, -5.75)
+
+[node name="SpawnPoint2" type="Marker2D" parent="WorldViewportContainer/WorldViewport/World/SpawnPoints" unique_id=796509299]
+position = Vector2(41.875, -5.75)
+
+[node name="SpawnPoint3" type="Marker2D" parent="WorldViewportContainer/WorldViewport/World/SpawnPoints" unique_id=1166373639]
+position = Vector2(69.375, -5.75)
 
 [node name="DropPreview" type="Control" parent="." unique_id=2108424360]
 unique_name_in_owner = true
@@ -56,18 +88,6 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("10_6mew0")
-
-[node name="SpawnPoints" type="Node2D" parent="." unique_id=732777320]
-unique_name_in_owner = true
-
-[node name="SpawnPoint1" type="Marker2D" parent="SpawnPoints" unique_id=891739274]
-position = Vector2(115, -46)
-
-[node name="SpawnPoint2" type="Marker2D" parent="SpawnPoints" unique_id=796509299]
-position = Vector2(335, -46)
-
-[node name="SpawnPoint3" type="Marker2D" parent="SpawnPoints" unique_id=1166373639]
-position = Vector2(555, -46)
 
 [node name="SpawnTimer" type="Timer" parent="." unique_id=2066036089]
 unique_name_in_owner = true
@@ -77,9 +97,11 @@ unique_name_in_owner = true
 [node name="SafeAreaMarginContainer" parent="HUD" unique_id=1572284943 instance=ExtResource("10_gjaof")]
 
 [node name="MarginContainer" type="MarginContainer" parent="HUD/SafeAreaMarginContainer" unique_id=251823655]
-layout_mode = 0
-offset_right = 720.0
-offset_bottom = 133.0
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 273.0
+grow_horizontal = 2
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 24
@@ -168,3 +190,4 @@ layout_mode = 3
 
 [node name="RewardPhase" parent="OverlayLayer" unique_id=1701872980 instance=ExtResource("13_1ha27")]
 unique_name_in_owner = true
+visible = false

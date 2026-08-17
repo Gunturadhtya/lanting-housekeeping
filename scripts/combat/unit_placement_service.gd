@@ -29,7 +29,7 @@ func place_unit(card : CardResource, drop_position : Vector2) -> int:
 	placed_unit_cards[unit.entity_id] = card
 	return unit.entity_id
 
-func find_unit_at(position : Vector2, max_distance : float = 48.0) -> int:
+func find_unit_at(position : Vector2, max_distance : float = 6.0) -> int:
 	var closest_id := -1
 	var closest_distance := max_distance
 	for id in placed_unit_ids:

@@ -13,7 +13,8 @@ signal level_changed(level_path : String)
 @export var total_waves : int = 3
 
 @export var hand_size : int = 4
-@export var hand_area_height : float = 190.0
+@export var hand_area_height : float = 23.75
+@export var player_bottom_margin : float = 5.0
 @export var reward_card_pool : Array[CardResource] = []
 
 @onready var reward_phase : RewardPhase = %RewardPhase
@@ -32,6 +33,9 @@ signal level_changed(level_path : String)
 @onready var drop_preview : CardDropPreview = %DropPreview
 @onready var energy_label : Label = %EnergyLabel
 @onready var slot_label : Label = %SlotLabel
+@onready var world_viewport : SubViewport = %WorldViewport
+@onready var world_viewport_container : SubViewportContainer = %WorldViewportContainer
+@onready var world_node : Node2D = %World
 
 var world := ECSWorld.new()
 var systems : Array[ECSSystem] = []
@@ -60,6 +64,8 @@ func _ready() -> void:
 		HealthSystem.new(),
 		RenderSyncSystem.new(),
 	]
+	var viewport_size = world_viewport.get_visible_rect().size
+	player.position = Vector2(viewport_size.x/2, viewport_size.y - player_bottom_margin - hand_area_height)
 
 	player.setup(world)
 	_player_id = player.entity_id
@@ -69,6 +75,7 @@ func _ready() -> void:
 	hand_ui.hand_size = hand_size
 	hand_ui.card_play_requested.connect(_on_card_play_requested)
 	drop_preview.world = world
+	drop_preview.world_to_screen = _world_to_screen
 	hand_ui.card_drag_started.connect(_on_card_drag_started)
 	hand_ui.card_drag_updated.connect(_on_card_drag_updated)
 	hand_ui.card_drag_ended.connect(_on_card_drag_ended)
@@ -92,16 +99,16 @@ func _build_controllers() -> void:
 	_phase_controller.phase_changed.connect(_apply_phase)
 
 	_wave_spawner = WaveSpawner.new(
-		world, self, enemy_scene, spawn_points, spawn_timer, player,
+		world, world_node, enemy_scene, spawn_points, spawn_timer, player,
 		spawn_interval, enemies_per_wave, total_waves
 	)
 	_wave_spawner.wave_started.connect(_hud_show_wave)
 	_wave_spawner.wave_cleared.connect(_on_wave_cleared)
 	_wave_spawner.all_waves_cleared.connect(_on_all_waves_cleared)
 
-	_unit_placement = UnitPlacementService.new(world, self)
+	_unit_placement = UnitPlacementService.new(world, world_node)
 
-	var drop_zone := DropZoneValidator.new(self, hand_area_height)
+	var drop_zone := DropZoneValidator.new(world_viewport, hand_area_height)
 
 	_selection = UnitSelectionController.new(world, _unit_placement, _phase_controller, drop_zone)
 
@@ -144,18 +151,28 @@ func _physics_process(delta : float) -> void:
 func _unhandled_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			_selection.handle_press(event.global_position)
+			_selection.handle_press(_screen_to_world(event.global_position))
 		else:
-			_selection.handle_release(event.global_position)
+			_selection.handle_release(_screen_to_world(event.global_position))
 	elif event is InputEventMouseMotion:
-		_selection.handle_motion(event.global_position)
+		_selection.handle_motion(_screen_to_world(event.global_position))
 	elif event is InputEventScreenTouch:
 		if event.pressed:
-			_selection.handle_press(event.position)
+			_selection.handle_press(_screen_to_world(event.position))
 		else:
-			_selection.handle_release(event.position)
+			_selection.handle_release(_screen_to_world(event.position))
 	elif event is InputEventScreenDrag:
-		_selection.handle_motion(event.position)
+		_selection.handle_motion(_screen_to_world(event.position))
+
+## Coordinate conversion between the outer (HUD/input) canvas and WorldViewport's local space
+
+func _screen_to_world(pos : Vector2) -> Vector2:
+	var scale := Vector2(world_viewport.size_2d_override) / world_viewport_container.size
+	return (pos - world_viewport_container.global_position) * scale
+
+func _world_to_screen(pos : Vector2) -> Vector2:
+	var scale := world_viewport_container.size / Vector2(world_viewport.size_2d_override)
+	return pos * scale + world_viewport_container.global_position
 ## Phase
 
 func _on_phase_button_pressed() -> void:
@@ -183,7 +200,7 @@ func _apply_phase(phase : int) -> void:
 ## Card plays
 
 func _on_card_play_requested(card : CardResource, drop_global_position : Vector2, card_ui : CardUI) -> void:
-	_card_play.handle_play(card, drop_global_position, card_ui)
+	_card_play.handle_play(card, _screen_to_world(drop_global_position), card_ui)
 
 func _on_card_drag_started(card : CardResource, global_position : Vector2) -> void:
 	if card.type != CardResource.CardType.ITEM or not _phase_controller.is_combat():
