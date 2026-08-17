@@ -16,6 +16,20 @@
 [ext_resource type="PackedScene" uid="uid://xbm1xxnioo0u" path="res://scenes/game_scene/card/hand_ui.tscn" id="11_jdlv5"]
 [ext_resource type="PackedScene" uid="uid://c8deckviewui1" path="res://scenes/game_scene/card/deck_view_ui.tscn" id="12_aoe3c"]
 [ext_resource type="PackedScene" uid="uid://cs0hgm4wcbotb" path="res://scenes/reward/reward_phase.tscn" id="13_1ha27"]
+[ext_resource type="Shader" uid="uid://de12vmk41fy1m" path="res://assets/shaders/water_background.gdshader" id="14_water"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_combat_water"]
+shader = ExtResource("14_water")
+shader_parameter/deep_color = Color(0.015, 0.08, 0.16, 1)
+shader_parameter/shallow_color = Color(0.04, 0.22, 0.32, 1)
+shader_parameter/foam_color = Color(0.75, 0.88, 0.85, 1)
+shader_parameter/highlight_color = Color(0.5, 0.75, 0.72, 1)
+shader_parameter/wave_speed = 0.25
+shader_parameter/wave_scale = 8.0
+shader_parameter/wave_strength = 0.035
+shader_parameter/color_bands = 3
+shader_parameter/foam_threshold = 0.9
+shader_parameter/highlight_threshold = 0.7
 
 [node name="CombatStage" type="Control" unique_id=235822082]
 layout_mode = 3
@@ -32,6 +46,7 @@ reward_card_pool = Array[ExtResource("3_6mew0")]([ExtResource("6_oe8jj"), ExtRes
 
 [node name="BackgroundColor" type="ColorRect" parent="." unique_id=1389548597]
 unique_name_in_owner = true
+material = SubResource("ShaderMaterial_combat_water")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -59,6 +74,7 @@ stretch = true
 
 [node name="WorldViewport" type="SubViewport" parent="WorldViewportContainer" unique_id=500000002]
 unique_name_in_owner = true
+transparent_bg = true
 handle_input_locally = false
 size = Vector2i(720, 1600)
 size_2d_override = Vector2i(90, 200)
@@ -67,6 +83,7 @@ render_target_update_mode = 4
 
 [node name="World" type="Node2D" parent="WorldViewportContainer/WorldViewport" unique_id=500000003]
 unique_name_in_owner = true
+texture_filter = 1
 
 [node name="Player" parent="WorldViewportContainer/WorldViewport/World" unique_id=1601606335 instance=ExtResource("9_pojro")]
 unique_name_in_owner = true
