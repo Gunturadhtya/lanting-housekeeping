@@ -1,18 +1,24 @@
 [gd_scene format=3 uid="uid://dvjsli6hvr27"]
 
 [ext_resource type="Script" uid="uid://b0xvun72uco7c" path="res://ecs/entities/player_entity.gd" id="1_cnlyv"]
+[ext_resource type="Texture2D" uid="uid://csb01msqoygtu" path="res://assets/sprites/lanting_house.png" id="2_4puan"]
 
 [node name="PlayerEntity" type="Node2D" unique_id=1601606335]
 script = ExtResource("1_cnlyv")
 
 [node name="Visual" type="Polygon2D" parent="." unique_id=25033473]
+visible = false
 color = Color(0.24, 0.52, 0.92, 1)
 polygon = PackedVector2Array(-28, -28, 28, -28, 28, 28, -28, 28)
 
 [node name="Label" type="Label" parent="." unique_id=1808159895]
+visible = false
 offset_left = -40.0
 offset_top = -60.0
 offset_right = 40.0
 offset_bottom = -30.0
 text = "BASE"
 horizontal_alignment = 1
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1204538887]
+texture = ExtResource("2_4puan")
