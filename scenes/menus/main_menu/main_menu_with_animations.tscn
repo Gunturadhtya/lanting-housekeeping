@@ -344,8 +344,16 @@ parameters/conditions/intro_done = false
 
 [node name="BackgroundTextureRect" parent="." index="4" unique_id=1940176448]
 material = SubResource("ShaderMaterial_menu_water")
+mouse_filter = 2
 texture = ExtResource("7_water_tex")
 stretch_mode = 0
+
+[node name="TitleLabel" parent="SafeAreaMarginContainer/MenuContainer/TitleMargin/TitleContainer" parent_id_path=PackedInt32Array(556427956) index="0" unique_id=359406872]
+text = " Lanting Guard
+"
+
+[node name="SubTitleMargin" parent="SafeAreaMarginContainer/MenuContainer" parent_id_path=PackedInt32Array(396616752) index="1" unique_id=1510335937]
+visible = false
 
 [node name="MenuButtonsBoxContainer" parent="SafeAreaMarginContainer/MenuContainer/MenuButtonsMargin/MenuButtonsContainer" parent_id_path=PackedInt32Array(116448484) index="0" unique_id=2017477786]
 lock = true

@@ -14,7 +14,8 @@ func _ready() -> void:
 
 func show_cards(cards : Array[CardResource]) -> void:
 	for child in grid.get_children():
-		child.queue_free()
+		grid.remove_child(child)
+		child.free()
 	var sorted_cards := cards.duplicate()
 	sorted_cards.sort_custom(_sort_cards)
 	for card in sorted_cards:

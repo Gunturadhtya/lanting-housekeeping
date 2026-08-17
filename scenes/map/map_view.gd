@@ -15,8 +15,6 @@ signal node_activated(node_id : String, node_type : int)
 @onready var scroll : ScrollContainer = %Scroll
 @onready var content : MapCanvas = %Content
 @onready var scrap_label : Label = %ScrapLabel
-@onready var deck_button : Button = %DeckButton
-@onready var deck_view_ui : DeckViewUI = %DeckViewUI
 
 var _map_data : Dictionary = {}
 var _positions : Dictionary = {}
@@ -24,8 +22,6 @@ var _buttons : Dictionary = {}
 var _hud : MapHud
 
 func _ready() -> void:
-	_hud = MapHud.new(scrap_label, deck_button)
-	deck_button.pressed.connect(_on_deck_button_pressed)
 	_refresh_hud()
 
 	var data := RunManager.get_map_data()
@@ -167,6 +163,3 @@ func _on_map_view_node_activated(node_id, node_type) -> void:
 func _refresh_hud() -> void:
 	_hud.show_scrap(RunManager.get_scrap())
 	_hud.show_deck(RunManager.get_deck().size())
-
-func _on_deck_button_pressed() -> void:
-	deck_view_ui.show_cards(RunManager.get_deck())

@@ -2,7 +2,7 @@ class_name EnemyEntity
 extends ECSEntity
 
 @export var max_health : int = 20
-@export var move_speed : float = 60.0
+@export var move_speed : float = 20.0
 @export var sensor_radius : float = 150.0
 @export var sensor_fov_degrees : float = 100.0
 @export var attack_damage : int = 5
@@ -11,9 +11,11 @@ extends ECSEntity
 @export var scrap_reward : int = 10
 @export var show_debug_cone : bool = true
 @export var attack_origin_offset : float = 14.0
+@export var texture: Texture2D
 
-const HEALTH_BAR_WIDTH := 32.0
-const HEALTH_BAR_HEIGHT := 5.0
+
+const HEALTH_BAR_WIDTH := 16.0
+const HEALTH_BAR_HEIGHT := 2.0
 const HEALTH_BAR_Y_OFFSET := -26.0
 
 func setup(ecs_world : ECSWorld, destination : Vector2) -> void:

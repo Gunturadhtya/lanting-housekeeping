@@ -11,5 +11,5 @@ type = 0
 texture = ExtResource("2_xsjqh")
 energy_cost = 3
 item_effect_type = 2
-item_slow_multiplier = 0.0
+item_slow_multiplier = 0.01
 metadata/_custom_type_script = "uid://2rmpys7jmxpb"

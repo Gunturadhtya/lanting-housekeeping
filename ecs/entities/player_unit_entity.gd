@@ -15,8 +15,8 @@ extends ECSEntity
 var _selected : bool = false
 var _drag_invalid : bool = false
 
-const HEALTH_BAR_WIDTH := 40.0
-const HEALTH_BAR_HEIGHT := 6.0
+const HEALTH_BAR_WIDTH := 20
+const HEALTH_BAR_HEIGHT := 2.0
 const HEALTH_BAR_Y_OFFSET := -34.0
 
 func setup(ecs_world : ECSWorld) -> void:

@@ -18,7 +18,7 @@ static func node_type_label(type : int) -> String:
 
 static func generate(
 	run_seed : int = -1,
-	floor_count : int = 4,
+	floor_count : int = 7,
 	min_nodes_per_floor : int = 2,
 	max_nodes_per_floor : int = 4,
 	max_connections_per_node : int = 2
