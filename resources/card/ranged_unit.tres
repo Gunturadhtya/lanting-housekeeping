@@ -2,11 +2,13 @@
 
 [ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_84fag"]
 [ext_resource type="PackedScene" uid="uid://c6pb7uvdk0vnk" path="res://ecs/entities/player_unit_entity.tscn" id="2_3pvtj"]
+[ext_resource type="Texture2D" uid="uid://bax2qfxj5kaw6" path="res://assets/sprites/units/unit_ranger.png" id="2_tl3hg"]
 
 [resource]
 script = ExtResource("1_84fag")
 card_name = "Ranged"
 card_id = "ranged_unit"
+texture = ExtResource("2_tl3hg")
 unit_scene = ExtResource("2_3pvtj")
 unit_max_health = 25
 unit_slot_cost = 2

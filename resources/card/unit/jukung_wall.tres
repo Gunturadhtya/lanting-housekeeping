@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://cf6k86fw0cgfw"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_eg25f"]
+[ext_resource type="Texture2D" uid="uid://ee70ceniscn3" path="res://assets/sprites/units/unit_wall.png" id="2_eg25f"]
+[ext_resource type="PackedScene" uid="uid://c6pb7uvdk0vnk" path="res://ecs/entities/player_unit_entity.tscn" id="3_f0hte"]
+
+[resource]
+script = ExtResource("1_eg25f")
+card_name = "Jukung Wall"
+card_id = "jukung-wall"
+texture = ExtResource("2_eg25f")
+unit_scene = ExtResource("3_f0hte")
+unit_max_health = 50
+unit_slot_cost = 2
+unit_move_speed = 30.0
+unit_attack_damage = 5
+unit_attack_range = 10.0
+metadata/_custom_type_script = "uid://2rmpys7jmxpb"

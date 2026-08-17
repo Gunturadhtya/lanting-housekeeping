@@ -24,6 +24,7 @@ func place_unit(card : CardResource, drop_position : Vector2) -> int:
 	unit.attack_cooldown = card.unit_attack_cooldown
 	_parent.add_child(unit)
 	unit.position = drop_position
+	unit.texture = card.texture
 	unit.setup(_world)
 	placed_unit_ids.append(unit.entity_id)
 	placed_unit_cards[unit.entity_id] = card

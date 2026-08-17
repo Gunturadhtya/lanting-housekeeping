@@ -10,6 +10,7 @@ extends ECSEntity
 @export var attack_cooldown : float = 1.0
 @export var show_debug_cone : bool = true
 @export var attack_origin_offset : float = 14.0
+@export var texture: Texture2D
 
 var _selected : bool = false
 var _drag_invalid : bool = false
@@ -19,6 +20,7 @@ const HEALTH_BAR_HEIGHT := 6.0
 const HEALTH_BAR_Y_OFFSET := -34.0
 
 func setup(ecs_world : ECSWorld) -> void:
+	$Sprite2D.texture = texture
 	_register(ecs_world)
 	world.add_component(entity_id, HealthComponent.new(max_health, max_health))
 	world.add_component(entity_id, FactionComponent.new(FactionComponent.FactionType.PLAYER))

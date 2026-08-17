@@ -2,13 +2,15 @@
 
 [ext_resource type="Script" uid="uid://cm2upe8lfs8rv" path="res://resources/run/run_config.gd" id="1_q5xdy"]
 [ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="2_o1gm6"]
-[ext_resource type="Resource" uid="uid://tau0tox305a7" path="res://resources/card/ranged_unit.tres" id="3_q6mer"]
-[ext_resource type="Resource" uid="uid://crggj1qjvbr52" path="res://resources/card/melee_unit.tres" id="4_ybet3"]
-[ext_resource type="Resource" uid="uid://hd2bs4d0tsoh" path="res://resources/card/slow_item.tres" id="5_e56sm"]
-[ext_resource type="Resource" uid="uid://srynk7uuyv22" path="res://resources/card/aoe_item.tres" id="6_bnqko"]
-[ext_resource type="Resource" uid="uid://otuu81av65h4" path="res://resources/card/heal_item.tres" id="7_as33y"]
+[ext_resource type="Resource" uid="uid://cf6k86fw0cgfw" path="res://resources/card/unit/jukung_wall.tres" id="3_e56sm"]
+[ext_resource type="Resource" uid="uid://b8ybvjsitwb7k" path="res://resources/card/unit/jukung_striker.tres" id="4_bnqko"]
+[ext_resource type="Resource" uid="uid://bjlhf83jeqx15" path="res://resources/card/unit/jukung_sumpit.tres" id="5_as33y"]
+[ext_resource type="Resource" uid="uid://ccnhm50hxqfga" path="res://resources/card/item/lunta.tres" id="6_8k62b"]
+[ext_resource type="Resource" uid="uid://gip7dij4f5nm" path="res://resources/card/item/palureka.tres" id="7_pkuob"]
+[ext_resource type="Resource" uid="uid://b0d2kcymyygvh" path="res://resources/card/item/bola_lumpur.tres" id="8_dlkas"]
+[ext_resource type="Resource" uid="uid://eqttexr50hjj" path="res://resources/card/item/hujan_damak.tres" id="9_g2kuf"]
 
 [resource]
 script = ExtResource("1_q5xdy")
-starting_deck = Array[ExtResource("2_o1gm6")]([ExtResource("3_q6mer"), ExtResource("4_ybet3"), ExtResource("5_e56sm"), ExtResource("6_bnqko"), ExtResource("7_as33y"), ExtResource("6_bnqko")])
+starting_deck = Array[ExtResource("2_o1gm6")]([ExtResource("3_e56sm"), ExtResource("4_bnqko"), ExtResource("5_as33y"), ExtResource("6_8k62b"), ExtResource("7_pkuob"), ExtResource("8_dlkas"), ExtResource("9_g2kuf")])
 metadata/_custom_type_script = "uid://cm2upe8lfs8rv"

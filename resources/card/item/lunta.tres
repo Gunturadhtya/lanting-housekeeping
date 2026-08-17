@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://ccnhm50hxqfga"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_y7qcf"]
+[ext_resource type="Texture2D" uid="uid://cmenxog5x2oxl" path="res://assets/sprites/cards/card_symbol_lunta.png" id="2_xsjqh"]
+
+[resource]
+script = ExtResource("1_y7qcf")
+card_name = "Lunta"
+card_id = "lunta"
+type = 0
+texture = ExtResource("2_xsjqh")
+energy_cost = 3
+item_effect_type = 2
+item_slow_multiplier = 0.0
+metadata/_custom_type_script = "uid://2rmpys7jmxpb"

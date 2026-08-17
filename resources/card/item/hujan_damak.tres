@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://eqttexr50hjj"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_rx53e"]
+[ext_resource type="Texture2D" uid="uid://bgpr85l7y7rqv" path="res://assets/sprites/cards/card_symbol_hujan_damak.png" id="2_uby40"]
+
+[resource]
+script = ExtResource("1_rx53e")
+card_name = "Hujan Damak"
+card_id = "hujan_damak"
+type = 0
+texture = ExtResource("2_uby40")
+energy_cost = 2
+item_damage = 10
+item_radius = 130.0

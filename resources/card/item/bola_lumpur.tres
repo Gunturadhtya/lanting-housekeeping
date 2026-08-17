@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://b0d2kcymyygvh"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_744fk"]
+[ext_resource type="Texture2D" uid="uid://btfefavra6jq5" path="res://assets/sprites/cards/card_symbol_bola_lumpur.png" id="2_744fk"]
+
+[resource]
+script = ExtResource("1_744fk")
+card_name = "Bola Lumpur"
+card_id = "bola_lumpur"
+type = 0
+texture = ExtResource("2_744fk")
+energy_cost = 2
+item_effect_type = 2
+item_slow_multiplier = 0.3
+metadata/_custom_type_script = "uid://2rmpys7jmxpb"

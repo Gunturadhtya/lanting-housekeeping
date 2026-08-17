@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://bjlhf83jeqx15"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_0g0qm"]
+[ext_resource type="Texture2D" uid="uid://bax2qfxj5kaw6" path="res://assets/sprites/units/unit_ranger.png" id="2_6fm77"]
+[ext_resource type="PackedScene" uid="uid://c6pb7uvdk0vnk" path="res://ecs/entities/player_unit_entity.tscn" id="3_e1ttr"]
+
+[resource]
+script = ExtResource("1_0g0qm")
+card_name = "Jukung Sumpit"
+card_id = "jukung-sumpit"
+texture = ExtResource("2_6fm77")
+unit_scene = ExtResource("3_e1ttr")
+unit_slot_cost = 2
+unit_move_speed = 30.0
+unit_attack_damage = 5
+unit_attack_range = 100.0
+metadata/_custom_type_script = "uid://2rmpys7jmxpb"

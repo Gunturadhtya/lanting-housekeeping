@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://b8ybvjsitwb7k"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_0g0qm"]
+[ext_resource type="Texture2D" uid="uid://sbexyhkb4fne" path="res://assets/sprites/units/unit_striker.png" id="2_6fm77"]
+[ext_resource type="PackedScene" uid="uid://c6pb7uvdk0vnk" path="res://ecs/entities/player_unit_entity.tscn" id="3_e1ttr"]
+
+[resource]
+script = ExtResource("1_0g0qm")
+card_name = "Jukung Striker"
+card_id = "jukung-striker"
+texture = ExtResource("2_6fm77")
+unit_scene = ExtResource("3_e1ttr")
+unit_move_speed = 30.0
+unit_attack_damage = 5
+unit_attack_range = 30.0
+metadata/_custom_type_script = "uid://2rmpys7jmxpb"

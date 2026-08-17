@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardResource" format=3 uid="uid://gip7dij4f5nm"]
+
+[ext_resource type="Script" uid="uid://2rmpys7jmxpb" path="res://resources/card/card_resource.gd" id="1_ghxn7"]
+[ext_resource type="Texture2D" uid="uid://8ygtgynnmo1r" path="res://assets/sprites/cards/card_symbol_palureka.png" id="2_gf7rf"]
+
+[resource]
+script = ExtResource("1_ghxn7")
+card_name = "Palureka"
+card_id = "palureka"
+type = 0
+texture = ExtResource("2_gf7rf")
+energy_cost = 2
+item_effect_type = 1
+item_heal_amount = 10
+metadata/_custom_type_script = "uid://2rmpys7jmxpb"
