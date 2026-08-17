@@ -12,6 +12,8 @@ signal level_changed(level_path : String)
 @export var enemies_per_wave : int = 5
 @export var total_waves : int = 3
 
+@export var combat_music : AudioStream = preload("res://assets/audio/music_theme.mp3")
+
 @export var hand_size : int = 4
 @export var hand_area_height : float = 23.75
 @export var player_bottom_margin : float = 5.0
@@ -66,6 +68,9 @@ func _ready() -> void:
 	]
 	var viewport_size = world_viewport.get_visible_rect().size
 	player.position = Vector2(viewport_size.x/2, viewport_size.y - player_bottom_margin - hand_area_height)
+
+	if combat_music:
+		ProjectMusicController.play_stream(combat_music)
 
 	player.setup(world)
 	_player_id = player.entity_id
@@ -135,6 +140,9 @@ func _build_controllers() -> void:
 	_scrap.initialize()
 	_energy.initialize()
 	_slots.initialize()
+
+func _exit_tree() -> void:
+	ProjectMusicController.stop()
 
 func _get_starting_deck() -> Array[CardResource]:
 	var run_deck := RunManager.get_deck()
