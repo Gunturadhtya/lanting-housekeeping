@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bnoo7kk27m5ge" path="res://scenes/map/map_view.gd" id="1"]
 [ext_resource type="Script" uid="uid://bv86w05aqq3jj" path="res://scenes/map/map_canvas.gd" id="2"]
 [ext_resource type="PackedScene" uid="uid://brmhxurtkng60" path="res://scenes/map/map_node_button.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://b43bca4345dfh" path="res://assets/sprites/ui/map_background.png" id="3_me3sr"]
 [ext_resource type="PackedScene" uid="uid://c8deckviewui1" path="res://scenes/game_scene/card/deck_view_ui.tscn" id="4"]
 
 [node name="MapView" type="Control" unique_id=772385787]
@@ -14,6 +15,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 node_button_scene = ExtResource("3")
+
+[node name="Background" type="NinePatchRect" parent="." unique_id=500000010]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_me3sr")
+region_rect = Rect2(15, 9, 194, 127)
 
 [node name="Scroll" type="ScrollContainer" parent="." unique_id=368489856]
 unique_name_in_owner = true

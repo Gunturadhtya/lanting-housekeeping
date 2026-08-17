@@ -6,6 +6,7 @@
 custom_minimum_size = Vector2(64, 64)
 offset_right = 64.0
 offset_bottom = 64.0
+flat = true
 script = ExtResource("1")
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=691921176]
@@ -16,8 +17,16 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="IconRect" type="TextureRect" parent="CenterContainer" unique_id=500000011]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="IconLabel" type="Label" parent="CenterContainer" unique_id=956340509]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "C"
