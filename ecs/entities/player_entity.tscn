@@ -21,4 +21,5 @@ text = "BASE"
 horizontal_alignment = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1204538887]
+texture_filter = 1
 texture = ExtResource("2_4puan")
